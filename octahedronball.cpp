@@ -26,39 +26,66 @@ OctahedronBall::OctahedronBall(int recursions, float radius)
     subDivide(v5, v3, v2, m_rekursjoner);
     subDivide(v5, v4, v3, m_rekursjoner);
     subDivide(v5, v1, v4, m_rekursjoner);
+
+    CalculateNormals();
 }
 
 void OctahedronBall::CalculatePhysics(float DeltaTime)
 {
-    Position_PreviousFrame = getPositionVector3D();
+//    GetSurfaceInfo();
+//    CalculateAcceleration(QVector3D SurfaceNormal);
+//    UpdateVelocity(QVector3D Acceleration, float DeltaTime);
+    //    UpdatePosition();
+}
 
-    QVector3D ChangeInPosition;
+void OctahedronBall::GetSurfaceInfo(Bakke* bakken, float DeltaTime/* hakk metode atm */)
+{
+    QVector3D SurfaceHeight;
+    QVector3D SurfaceNormal;
+
+    Position = mMatrix.column(3).toVector3D();
+    for (unsigned int i{1}; i <= bakken->mTriangleIndex; i++)
     {
-        Velocity.setZ(Velocity.z() + (DeltaTime * GravityConstant));
+        const bool b = bakken->BarySentricCoordinate( Position, SurfaceHeight, SurfaceNormal, i );
 
-        Speed = Velocity.length();
-        mLogger->logText("Speed: " + std::to_string(Speed));
-
-        ChangeInPosition = Velocity;
-    }
-    Estimated_Position_NextFrame = Position + ChangeInPosition;
-
-//    if (Estimated_Position_NextFrame.z() < 0.f)
-//    {
-
-//    }
-
-    /* If ball is on the ground */
-    if (Position.z() + ChangeInPosition.z() < 0.f)
-    {
-        float difference = 0 - (Position.z() + ChangeInPosition.z());
-        ChangeInPosition.setZ(ChangeInPosition.z() + difference);
-
-        Velocity.setZ(0.f);
+        if (b){ break; }
     }
 
-    mMatrix.translate(ChangeInPosition);
-    Position = getPositionVector3D();
+    /* Test for z posisjonen */
+    mMatrix.translate( 0, 0, SurfaceHeight.z() - Position.z() );
+
+    CalculateAcceleration(SurfaceNormal);
+    UpdateVelocity(DeltaTime);
+    /* Sjekker hvor ballen befinner seg neste frame
+     * Om det er innenfor en ny trekant så:
+     *  1. Finn ut når den kommer over til en ny trekant
+     *  2. Regn ut ny velocity basert på når den kommer over til den nye trekanten
+     */
+    UpdatePosition();
+}
+
+void OctahedronBall::CalculateAcceleration(QVector3D SurfaceNormal)
+{
+    qDebug() << "SurfaceNormal: " << SurfaceNormal;
+
+    float nx{ SurfaceNormal.x() };
+    float ny{ SurfaceNormal.y() };
+    float nz{ SurfaceNormal.z() };
+    Acceleration = QVector3D{nx * nz * Gravity, ny * nz * Gravity, (nz * nz * Gravity) - Gravity};
+    qDebug() << " Acceleration: " << Acceleration;
+}
+
+void OctahedronBall::UpdateVelocity(float DeltaTime)
+{
+    Velocity += Acceleration * DeltaTime * 0.5f;
+}
+
+void OctahedronBall::UpdatePosition()
+{
+    mMatrix.translate(Velocity.x(), Velocity.y());
+    Position = mMatrix.column(3).toVector3D();
+
+    //mMatrix = mScale * mRotation * mPosition;
 }
 
 void OctahedronBall::subDivide(const QVector3D &a, const QVector3D &b, const QVector3D &c, int n)
@@ -79,12 +106,27 @@ void OctahedronBall::subDivide(const QVector3D &a, const QVector3D &b, const QVe
     }
 }
 
+void OctahedronBall::CalculateNormals()
+{
+    for (unsigned int it{0}; it < mVertices.size(); it+=3)
+    {
+        QVector3D v1{ mVertices[it+1].getPosition() - mVertices[it].getPosition() };
+        QVector3D v2{ mVertices[it+2].getPosition() - mVertices[it].getPosition() };
+        QVector3D normal = QVector3D::crossProduct(v1, v2);
+        normal.normalize();
+
+        mVertices[it].setNormal(normal);
+        mVertices[it+1].setNormal(normal);
+        mVertices[it+2].setNormal(normal);
+    }
+}
+
 void OctahedronBall::lagTriangel(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3)
 {
-    QVector3D color{20, 20, 200};
-    mVertices.push_back(Vertex(v1, color));
-    mVertices.push_back(Vertex(v2, color));
-    mVertices.push_back(Vertex(v3, color));
+//    QVector3D color{20, 20, 200};
+    mVertices.push_back(Vertex(v1));
+    mVertices.push_back(Vertex(v2));
+    mVertices.push_back(Vertex(v3));
 
     int m = mVertices.size();
     mIndices.push_back(m-3);
@@ -107,7 +149,7 @@ void OctahedronBall::init()
     //Vertex Buffer Object to hold vertices - VBO
     glBufferData( GL_ARRAY_BUFFER, mVertices.size()*sizeof( Vertex ), mVertices.data(), GL_STATIC_DRAW );
 
-    // 1rst attribute buffer : vertices
+    // 1st attribute buffer : vertices
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<GLvoid*>(0 )  );          // array buffer offset
     glEnableVertexAttribArray(0);
 

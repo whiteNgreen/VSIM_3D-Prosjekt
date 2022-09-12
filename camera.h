@@ -42,7 +42,7 @@ private:
     QVector3D globalUp{0, 0, 1};
 
     float pitch{-90.f};
-    float yaw{-180.f};
+    float yaw{-45.f};
 
     float cameraRotationSpeed = 0.2f;
     float cameraMovementSpeed = 0.5f;

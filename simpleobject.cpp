@@ -81,23 +81,24 @@ void SimpleObject::init()
 
 void SimpleObject::draw()
 {
-    /* Change rendering for World Axis type */
-    if (m_type == Type::Axis){
-//        glUniformMatrix4fv(m_shader->mMmatrixUniform, 1, GL_FALSE, mMatrix.constData());
-        m_shader->setUniformMatrix("mMatrix", mMatrix);
-        glBindVertexArray( mVAO );
-        glDrawArrays(GL_LINES, 0, mVertices.size());
-        glBindVertexArray(0);
-        return;
-    }
+//    /* Change rendering for World Axis type */
+//    if (m_type == Type::Axis){
+////        glUniformMatrix4fv(m_shader->mMmatrixUniform, 1, GL_FALSE, mMatrix.constData());
+//        m_shader->setUniformMatrix("mMatrix", mMatrix);
+//        glBindVertexArray( mVAO );
+//        glDrawArrays(GL_LINES, 0, mVertices.size());
+//        glBindVertexArray(0);
+//        return;
+//    }
 
-    m_shader->setUniformMatrix("mMatrix", mMatrix);
+//    m_shader->setUniformMatrix("mMatrix", mMatrix);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
-    glBindVertexArray( mVAO );
-    glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
-    glBindVertexArray(0);
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_2D, m_texture);
+//    glBindVertexArray( mVAO );
+//    glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
+//    glBindVertexArray(0);
+    VisualObject::draw();
 }
 
 void SimpleObject::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)

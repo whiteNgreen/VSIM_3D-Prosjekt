@@ -79,11 +79,18 @@ Vertex::Vertex(QVector3D Position)
     m_xyz[2] = Position.z();
 }
 
-void Vertex::setXYZ(float x, float y, float z)
+void Vertex::setPosition(float x, float y, float z)
 {
     m_xyz[0] = x;
     m_xyz[1] = y;
     m_xyz[2] = z;
+}
+
+void Vertex::setPosition(QVector3D NewPosition)
+{
+    m_xyz[0] = NewPosition.x();
+    m_xyz[1] = NewPosition.y();
+    m_xyz[2] = NewPosition.z();
 }
 
 void Vertex::setNormal(float r, float g, float b)

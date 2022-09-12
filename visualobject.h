@@ -20,8 +20,8 @@ public:
 
     /* Vil kanskje fortsatt ta inn GLuint matrixUniform for at den ikke skal måtte settes i renderwindow
      * for hvert objekt, men det blir til senere. */
-    virtual void init(/*GLuint matrixUniform*/){}
-    virtual void draw()=0;
+    virtual void init(/*GLuint matrixUniform*/);
+    virtual void draw();
     virtual void draw(QMatrix4x4& projectionMatrix, QMatrix4x4& viewMatrix){}
 
     Position2D getPosition2D();

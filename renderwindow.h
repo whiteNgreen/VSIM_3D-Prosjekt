@@ -19,6 +19,7 @@
 #include "beziercurve.h"
 #include "aabbfence.h"
 #include "octahedronball.h"
+#include "Objects/bakke.h"
 
 class QOpenGLContext;
 class Shader;
@@ -91,6 +92,7 @@ private:    // Objekter i scenen
 
     SimpleObject* Axis{nullptr};
 
+    Bakke* Bakken{nullptr};
     OctahedronBall* Ball{nullptr};
 
 //    std::vector<VisualObject*> mVisualObjects;

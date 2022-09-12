@@ -1,9 +1,31 @@
 #include "camera.h"
 
-Camera::Camera() : mPosition(-10, 0, 5), mLookAt(0,0,0)
+Camera::Camera() : mPosition(10, 10, 7), mLookAt(5,3,1)
 {
     mViewMatrix.setToIdentity();
     mProjectionMatrix.setToIdentity();
+
+    /* Setter pitch og yaw verdier basert på mPosition og mLookAt */
+    {
+        QVector3D V{ mLookAt - mPosition };
+        V.normalize();
+
+        /* pitch */
+        float P = QVector3D::dotProduct(QVector3D(0,0,1), V);
+        pitch = acosf(P) * (180/M_PI) * -1.f;
+
+        /* yaw */
+        QVector2D F{ V.toVector2D() * -1.f };
+        F.normalize();
+        float Y = QVector2D::dotProduct(QVector2D(1,0), F);
+        yaw = acosf(Y) * (180/M_PI);
+
+        /* Sjekker om yaw er til høyre eller venstre */
+        {
+            float D = QVector2D::dotProduct(QVector2D(0,1), F);
+            if (D < 0.f) { yaw *= -1.f; }
+        }
+    }
 
     updateForwardVector();
 }

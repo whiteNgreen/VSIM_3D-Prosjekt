@@ -27,7 +27,8 @@ public:
     ~Vertex(){}
 
 
-    void setXYZ(float x, float y, float z);
+    void setPosition(float x, float y, float z);
+    void setPosition(QVector3D NewPosition);
     void setNormal(float r, float g, float b);
     void setNormal(QVector3D normal);
     void setUV(float U, float V);

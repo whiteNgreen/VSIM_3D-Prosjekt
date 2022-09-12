@@ -169,13 +169,33 @@ void RenderWindow::init()
     SimpleObject* FlatGround = new SimpleObject(Type::Plane, 10.f, plainShader);
     FlatGround->init();
     FlatGround->mMatrix.rotate(-90.f, 1, 0 ,0);
-    mMap.insert({"FlatGround", FlatGround});
+//    mMap.insert({"FlatGround", FlatGround});
+
+
+    /* Vertex punkter */                // Hvilke punkter som er de samme som den fysiske modellen
+    QVector3D a{  0.f,  5.f,  4.f };    // A
+    QVector3D b{  0.f,  0.f,  0.f };
+    QVector3D c{  5.f,  0.f,  4.f };    // B
+    QVector3D d{  5.f,  5.f,  0.f };
+    QVector3D e{ 10.f,  0.f,  0.f };
+    QVector3D f{ 10.f,  5.f,  0.f };    // C
+
+    Bakken = new Bakke(plainShader);
+    /* Første quad */
+    Bakken->CreateTriangle(a, b, d);
+    Bakken->CreateTriangle(b, c, d);
+    /* Andre quad */
+    Bakken->CreateTriangle(d, c, e);
+    Bakken->CreateTriangle(d, e, f);
+
+    Bakken->init();
+
 
     /* Ballen */
-    Ball = new OctahedronBall(3, 0.5);
+    Ball = new OctahedronBall(3, 0.5f);
     Ball->m_shader = plainShader;
     Ball->init();
-    Ball->mMatrix.translate(0, 0, 5);
+    Ball->mMatrix.translate(0, 4.9f, 4.f);
     mMap.insert({"Ball", Ball});
 
     /* Skybox / CubeMap */
@@ -211,14 +231,22 @@ void RenderWindow::render()
     /* Calculate Physics for mMap objects */
     if (bPlay)
     {
-        Ball->CalculatePhysics(DeltaTime);
+        static float movement{};
+        movement += DeltaTime;
+//        Ball->mMatrix.translate(sinf(movement) / 10.f, 0, 0);
+
+        Ball->GetSurfaceInfo(Bakken, DeltaTime);
+
     }
+
 
     /* Draw mMap objects */
     for (const auto& it : mMap)
     {
         it.second->draw();
     }
+    Bakken->draw();
+
         /* Draw other objects */
         Axis->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
 
@@ -275,7 +303,7 @@ void RenderWindow::exposeEvent(QExposeEvent *)
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void RenderWindow::togglePlay(bool bPlay)
 {
-    mCamera->setFollowPlayer(bPlay);
+//    mCamera->setFollowPlayer(bPlay);
     bGameMode = bPlay;
 }
 

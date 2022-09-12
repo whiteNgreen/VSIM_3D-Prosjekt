@@ -10,6 +10,7 @@ INCLUDEPATH += \
 #    ./stb_image
 
 SOURCES += main.cpp \
+    Objects/bakke.cpp \
     Shaders/shader.cpp \
     aabbfence.cpp \
     beziercurve.cpp \
@@ -29,10 +30,12 @@ SOURCES += main.cpp \
     simpleobject.cpp \
     terrain.cpp \
     texture.cpp \
+    trianglesurface.cpp \
     vertex.cpp \
     visualobject.cpp
 
 HEADERS += \
+    Objects/bakke.h \
     Shaders/shader.h \
     aabbfence.h \
     beziercurve.h \
@@ -54,6 +57,7 @@ HEADERS += \
     simpleobject.h \
     terrain.h \
     texture.h \
+    trianglesurface.h \
     vertex.h \
     visualobject.h
 
