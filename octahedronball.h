@@ -13,7 +13,7 @@ private:
 
     int m_rekursjoner;
     int m_indeks;
-    float size; // Radiusen til ballen
+    float radius; // Radiusen til ballen
     void lagTriangel(const QVector3D& v1, const QVector3D& v2, const QVector3D& v3);
     void subDivide(const QVector3D& a, const QVector3D& b, const QVector3D&c, int n);
     void CalculateNormals();
@@ -30,17 +30,19 @@ private:
 
 /* Fysikk utregning */
 private:
-    float Gravity = 9.81f;
+//    float Gravity = 9.81f;
+    float Gravity = 1.f;  // Temp gravity
     float Mass = 1.f;
 
+    QVector3D Acceleration_PreviousFrame;
     QVector3D Acceleration;
 
+    QVector3D Velocity_PreviousFrame;
     QVector3D Velocity;
     float Speed;
 
     QVector3D Position_PreviousFrame;
     QVector3D Position;
-    QVector3D Estimated_Position_NextFrame;
 
 public:
     void CalculatePhysics(float DeltaTime);

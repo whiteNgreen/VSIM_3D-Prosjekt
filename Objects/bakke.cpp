@@ -35,7 +35,7 @@ void Bakke::CreateTriangle(QVector3D v1, QVector3D v2, QVector3D v3)
     mTriangleIndex++;
 }
 
-bool Bakke::BarySentricCoordinate(const QVector3D ObjectPosition, QVector3D& ObjectSurfaceHeight, QVector3D &SurfaceNormal, const int TriangleIndex)
+int Bakke::BarySentricCoordinate(const QVector3D ObjectPosition, QVector3D& TheBarysentricCoordinates, QVector3D& ObjectSurfaceHeight, QVector3D &SurfaceNormal, const int TriangleIndex)
 {
     int Vertex = (TriangleIndex * 3);
 
@@ -78,6 +78,7 @@ bool Bakke::BarySentricCoordinate(const QVector3D ObjectPosition, QVector3D& Obj
 //    qDebug() << "n3: " << n;
 
 //    qDebug() << "Baryc: " << Baryc;
+    TheBarysentricCoordinates = Baryc;
     if (Baryc.x() >= 0.f && Baryc.y() >= 0.f && Baryc.z() >= 0.f)
     {
         /* Returns the objects intended z position on the surface */
@@ -88,11 +89,28 @@ bool Bakke::BarySentricCoordinate(const QVector3D ObjectPosition, QVector3D& Obj
                     );
         /* Returns the normal of the surface */
         SurfaceNormal = mVertices[Vertex - 3].getNormal();
-        return true;
+        return TriangleIndex;
     }
 
     ObjectSurfaceHeight.setZ(0.f);
-    return false;
+    return 0;
+}
+
+QVector3D Bakke::GetCoordinateWithBaryc(const QVector3D &Baryc, const int index)
+{
+    /* Antar at ingen av verdiene på Baryc er negative */
+    int Vertex = (index * 3);
+
+    /* Punktene a, b, c */
+    QVector3D a = mVertices[Vertex - 3].getPosition();
+    QVector3D b = mVertices[Vertex - 2].getPosition();
+    QVector3D c = mVertices[Vertex - 1].getPosition();
+
+    return {
+            a.x() * Baryc.x() + b.x() * Baryc.y() + c.x() * Baryc.z(),
+            a.y() * Baryc.x() + b.y() * Baryc.y() + c.y() * Baryc.z(),
+            a.z() * Baryc.x() + b.z() * Baryc.y() + c.z() * Baryc.z(),
+    };
 }
 
 

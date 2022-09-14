@@ -173,12 +173,12 @@ void RenderWindow::init()
 
 
     /* Vertex punkter */                // Hvilke punkter som er de samme som den fysiske modellen
-    QVector3D a{  0.f,  5.f,  4.f };    // A
+    QVector3D a{  0.f, 10.f,  4.f };    // A
     QVector3D b{  0.f,  0.f,  0.f };
-    QVector3D c{  5.f,  0.f,  4.f };    // B
-    QVector3D d{  5.f,  5.f,  0.f };
-    QVector3D e{ 10.f,  0.f,  0.f };
-    QVector3D f{ 10.f,  5.f,  0.f };    // C
+    QVector3D c{ 10.f,  0.f,  4.f };    // B
+    QVector3D d{ 10.f, 10.f,  0.f };
+    QVector3D e{ 15.f,  0.f,  0.f };
+    QVector3D f{ 15.f,  5.f,  4.f };    // C
 
     Bakken = new Bakke(plainShader);
     /* Første quad */
@@ -195,11 +195,26 @@ void RenderWindow::init()
     Ball = new OctahedronBall(3, 0.5f);
     Ball->m_shader = plainShader;
     Ball->init();
-    Ball->mMatrix.translate(0, 4.9f, 4.f);
+    Ball->mMatrix.translate(1.f, 9.f, 6.f);
     mMap.insert({"Ball", Ball});
 
     /* Skybox / CubeMap */
     cubemap = new CubeMap(cubeMapShader);
+
+
+    /* BarycentricCoordinate test */
+    QVector3D a1{ 0, 0, 0 };
+    QVector3D b1{ 5, 0, 5 };
+    QVector3D c1{ 2.5, 5, 0 };
+    QVector3D Baryc{ 0.5, 0.5, 0 };
+    QVector3D Location{
+            a1.x() * Baryc.x() + b1.x() * Baryc.y() + c1.x() * Baryc.z(),
+            a1.y() * Baryc.x() + b1.y() * Baryc.y() + c1.y() * Baryc.z(),
+            a1.z() * Baryc.x() + b1.z() * Baryc.y() + c1.z() * Baryc.z(),
+    };
+
+//    mLogger->logText("BarycentricCoordinate: " + std::to_string(Location));
+    qDebug() << "BarycentricCoordinate: " << Location;
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 }
@@ -229,7 +244,7 @@ void RenderWindow::render()
     checkForGLerrors();
 
     /* Calculate Physics for mMap objects */
-    if (bPlay)
+    if (bPlay || bGoNextFrame)
     {
         static float movement{};
         movement += DeltaTime;
@@ -237,6 +252,7 @@ void RenderWindow::render()
 
         Ball->GetSurfaceInfo(Bakken, DeltaTime);
 
+        bGoNextFrame = false;
     }
 
 
@@ -311,6 +327,11 @@ void RenderWindow::togglePause(bool bPause)
 {
     bPlay = bPause;
     qDebug() << "Playing: " << bPlay;
+}
+
+void RenderWindow::GoNextFrame()
+{
+    if (!bGoNextFrame){ bGoNextFrame = true; }
 }
 
 

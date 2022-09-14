@@ -14,7 +14,8 @@ public:
 
     void CreateTriangle(const QVector3D v1,const QVector3D v2,const QVector3D v3);
 
-    bool BarySentricCoordinate(const QVector3D ObjectPosition, QVector3D& ObjectSurfaceHeight, QVector3D& SurfaceNormal, const int TriangleIndex);
+    int BarySentricCoordinate(const QVector3D ObjectPosition, QVector3D& TheBarysentricCoordinates, QVector3D& ObjectSurfaceHeight, QVector3D& SurfaceNormal, const int TriangleIndex);
+    QVector3D GetCoordinateWithBaryc(const QVector3D& Baryc, const int index);
 
     unsigned int mTriangleIndex{0};
 };

@@ -44,6 +44,7 @@ public:
 
     void togglePlay(bool bPlay);
     void togglePause(bool bPause);
+    void GoNextFrame();
 
 private slots:
     void render();          //the actual render - function
@@ -51,6 +52,7 @@ private slots:
 private:
     void init();            //initialize things we need before rendering
     bool bPlay{};           // Determines if the game is paused or not
+    bool bGoNextFrame{};    // If the game should calculate the next frame or not
     bool bGameMode{};       // Editor mode or Gaming mode
     bool bEndGame{};        // Game is done or not
 

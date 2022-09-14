@@ -108,17 +108,39 @@ void MainWindow::on_PauseButton_clicked(bool checked)
     /* If GameMode is the editor. The pause button shows Simulate, to allow for the game
      * to run in editor mode */
     if (editor && !checked)
+    {
         t_Paused = "Simulate";
+    }
     ui->PauseButton->setText(t_Paused);
     if (checked)
     {
+        ui->NextFrameButton->setText("");
         t_Paused = "Playing";
     }
     else
     {
+        ui->NextFrameButton->setText("Next Frame");
         t_Paused = "Pause";
     }
     ui->TextMode->setText(t_GameMode + '\n' + t_Paused);
     mRenderWindow->togglePause(checked);
 }
+
+
+static bool bPressedNextFrameButton{false};
+void MainWindow::on_NextFrameButton_pressed()
+{
+    if (!bPressedNextFrameButton)
+    {
+        mRenderWindow->GoNextFrame();
+
+        bPressedNextFrameButton = true;
+    }
+}
+
+void MainWindow::on_NextFrameButton_released()
+{
+    bPressedNextFrameButton = false;
+}
+
 
