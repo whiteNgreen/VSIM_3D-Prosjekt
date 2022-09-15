@@ -94,8 +94,18 @@ void OctahedronBall::GetSurfaceInfo(Bakke* bakken, float DeltaTime/* hakk metode
             if (tmpIndex){ break; }
         }
 
+
+//        QVector3D Height;
+//        /* Setter kula oppå flata */
+//        if (tmpIndex)
+//        {
+//            float theta = (M_PI/2) - (asinf(SurfaceNormal.z()));
+
+//            Height = { 0, 0, radius / sinf(theta) };
+//        }
         /* Sjekk om ballen er oppå flata */
         HeightDifferenceObjectSurface = SurfacePosition.z() - ObjectPosition.z();
+        HeightDifferenceObjectSurface += radius;
         mLogger->logText("HeightDifference: " + std::to_string(HeightDifferenceObjectSurface));
 
         /* Hvis ballen er under flata så korrigerer vi høyden i z-aksen til å matche surface */
@@ -153,8 +163,17 @@ void OctahedronBall::GetSurfaceInfo(Bakke* bakken, float DeltaTime/* hakk metode
             mLogger->logText("CAME OVER TO A NEW TRIANGLE!");
         }
 
+//        QVector3D Height;
+//        /* Setter kula oppå flata */
+//        if (tmpIndex)
+//        {
+//            float theta = (M_PI/2) - (asinf(SurfaceNormal.z()));
+
+//            Height = { 0, 0, radius / sinf(theta) };
+//        }
         /* Sjekk om ballen er oppå flata */
         HeightDifferenceObjectSurface = SurfacePosition2.z() - ObjectPosition.z();
+        HeightDifferenceObjectSurface += radius;
         mLogger->logText("HeightDifference: " + std::to_string(HeightDifferenceObjectSurface));
 
         /* Hvis ballen er under flata så korrigerer vi høyden i z-aksen til å matche surface */
@@ -174,10 +193,15 @@ void OctahedronBall::GetSurfaceInfo(Bakke* bakken, float DeltaTime/* hakk metode
                 LogVector("n", n);
                 LogVector("Vetter", Vetter);
             }
+
+            HeightDifferenceObjectSurface = SurfacePosition2.z() - ObjectPosition.z();
+            HeightDifferenceObjectSurface += radius;
             TranslationAdjustment += QVector3D(0, 0, HeightDifferenceObjectSurface);
             ObjectPosition += TranslationAdjustment;
 
             LogVector("TranslationAdjustment", TranslationAdjustment);
+
+
 
             FinalTriangleIndex = tmpIndex;
         }

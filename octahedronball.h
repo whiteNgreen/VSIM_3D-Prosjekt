@@ -35,8 +35,8 @@ private:
 
 /* Fysikk utregning */
 private:
-//    float Gravity = 9.81f;
-    float Gravity = 1.f;  // Temp gravity
+    float Gravity = 9.81f;
+//    float Gravity = 1.f;  // Temp gravity
     float Mass = 1.f;
 
     QVector3D Acceleration_PreviousFrame;
