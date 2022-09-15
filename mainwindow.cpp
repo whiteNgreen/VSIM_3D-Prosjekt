@@ -144,3 +144,12 @@ void MainWindow::on_NextFrameButton_released()
 }
 
 
+
+void MainWindow::on_ResetButton_pressed()
+{
+//    ui->PauseButton->setText("Simulate");
+//    on_PauseButton_clicked(true);
+//    ui->PauseButton->toggle();
+    mRenderWindow->Reset();
+}
+

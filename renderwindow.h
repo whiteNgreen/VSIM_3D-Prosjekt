@@ -45,6 +45,7 @@ public:
     void togglePlay(bool bPlay);
     void togglePause(bool bPause);
     void GoNextFrame();
+    void Reset();
 
 private slots:
     void render();          //the actual render - function
@@ -95,6 +96,7 @@ private:    // Objekter i scenen
     SimpleObject* Axis{nullptr};
 
     Bakke* Bakken{nullptr};
+    QVector3D StartPosition{};
     OctahedronBall* Ball{nullptr};
 
 //    std::vector<VisualObject*> mVisualObjects;

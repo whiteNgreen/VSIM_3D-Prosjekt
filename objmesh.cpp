@@ -63,7 +63,7 @@ void ObjMesh::draw()
 void ObjMesh::readFile(std::string filename)
 {
     // Open file
-    std::string path = "../3Dprog22/Assets/" + filename;
+    std::string path = "../VSIM_3D-Prosjekt/Assets/" + filename;
     std::ifstream fileIn;
     fileIn.open(path, std::ifstream::in);
     if(!fileIn)

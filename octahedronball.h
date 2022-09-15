@@ -10,6 +10,7 @@ class OctahedronBall : public VisualObject
 /* Konstruksjonen av objektet og ballen */
 private:
     class Logger* mLogger{nullptr};
+    int FrameCount{};
 
     int m_rekursjoner;
     int m_indeks;
@@ -18,9 +19,13 @@ private:
     void subDivide(const QVector3D& a, const QVector3D& b, const QVector3D&c, int n);
     void CalculateNormals();
 
+
 public:
     OctahedronBall(int recursions, float radius);
     ~OctahedronBall(){}
+
+    void Reset(const QVector3D& StartLocation);
+    void MoveTo(const QVector3D& Location);
 
 
 /* Bakken ballen skal være på */
@@ -49,9 +54,9 @@ public:
 
     /* Gets information about the surface the object is on */
     void GetSurfaceInfo(Bakke* bakken, float DeltaTime);
-    void CalculateAcceleration(QVector3D SurfaceNormal);
+    void CalculateAcceleration(QVector3D SurfaceNormal, const int SurfaceIndex);
     void UpdateVelocity(float DeltaTime);
-    void UpdatePosition();
+    void UpdatePosition(const QVector3D& Adjustment);
 
 
 /* Rendering */
@@ -60,7 +65,9 @@ public:
     void draw() override;
     void draw(QMatrix4x4& projectionMatrix, QMatrix4x4& viewMatrix) override;
 
-
+/* Debug */
+public:
+    void LogVector(const std::string Name, const QVector3D vector);
 };
 
 #endif // OCTAHEDRONBALL_H

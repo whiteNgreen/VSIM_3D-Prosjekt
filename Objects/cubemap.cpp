@@ -25,7 +25,7 @@ CubeMap::CubeMap(Shader* shader)
     int width, height, nrChannels;
     for (uint32_t i=0; i < faces.size(); i++)
     {
-        std::string path{"../3Dprog22/Assets/skybox/" + faces[i]};
+        std::string path{"../VSIM_3D-Prosjekt/Assets/skybox/" + faces[i]};
 //        qDebug() << qPrintable(QString::fromStdString(faces[i]));
         unsigned char* data;
         data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);

@@ -10,7 +10,7 @@ Terrain::Terrain(Shader* shader)
 
     mLogger = Logger::getInstance();
 
-    std::string heightmap = "../3Dprog22/Assets/HeightmapEksamen2.png";
+    std::string heightmap = "../VSIM_3D-Prosjekt/Assets/HeightmapEksamen2.png";
     int width, height, nrChannels;
 
 //    stbi_set_flip_vertically_on_load(true);

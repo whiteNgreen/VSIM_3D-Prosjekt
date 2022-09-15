@@ -97,14 +97,14 @@ void RenderWindow::init()
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
     //Qt makes a build-folder besides the project folder. That is why we go down one directory
     // (out of the build-folder) and then up into the project folder.
-    plainShader = new Shader("../3Dprog22/Shaders/plainshader.vert", "../3Dprog22/Shaders/plainshader.frag");
+    plainShader = new Shader("../VSIM_3D-Prosjekt/Shaders/plainshader.vert", "../VSIM_3D-Prosjekt/Shaders/plainshader.frag");
     plainShader->setShaderType(ShaderType::plain);
 
-    textureShader = new Shader("../3Dprog22/Shaders/textureshader.vert", "../3Dprog22/Shaders/textureshader.frag");
+    textureShader = new Shader("../VSIM_3D-Prosjekt/Shaders/textureshader.vert", "../VSIM_3D-Prosjekt/Shaders/textureshader.frag");
     textureShader->setShaderType(ShaderType::phong);
     textureShader->getUniformMatrix("textureSampler");
 
-    phongShader = new Shader("../3Dprog22/Shaders/phongshader.vert", "../3Dprog22/Shaders/phongshader.frag");
+    phongShader = new Shader("../VSIM_3D-Prosjekt/Shaders/phongshader.vert", "../VSIM_3D-Prosjekt/Shaders/phongshader.frag");
     phongShader->setShaderType(ShaderType::phong);
     phongShader->getUniformMatrix("mMatrix");
     phongShader->getUniformMatrix("pMatrix");
@@ -120,7 +120,7 @@ void RenderWindow::init()
     phongShader->getUniformMatrix("cameraPosition");
 
 
-    cubeMapShader = new Shader("../3Dprog22/Shaders/cubemapShader.vert", "../3Dprog22/Shaders/cubemapShader.frag");
+    cubeMapShader = new Shader("../VSIM_3D-Prosjekt/Shaders/cubemapShader.vert", "../VSIM_3D-Prosjekt/Shaders/cubemapShader.frag");
     cubeMapShader->setShaderType(ShaderType::cubemap);
     cubeMapShader->getUniformMatrix("view");
     cubeMapShader->getUniformMatrix("projection");
@@ -173,12 +173,15 @@ void RenderWindow::init()
 
 
     /* Vertex punkter */                // Hvilke punkter som er de samme som den fysiske modellen
-    QVector3D a{  0.f, 10.f,  4.f };    // A
+    QVector3D a{ -5.f, 10.f,  4.f };    // A
     QVector3D b{  0.f,  0.f,  0.f };
-    QVector3D c{ 10.f,  0.f,  4.f };    // B
-    QVector3D d{ 10.f, 10.f,  0.f };
-    QVector3D e{ 15.f,  0.f,  0.f };
-    QVector3D f{ 15.f,  5.f,  4.f };    // C
+    QVector3D c{ 12.5f,  -5.f,  2.f };    // B
+    QVector3D d{ 5.f, 10.f,  0.f };
+    QVector3D e{ 25.f, -5.f,  0.f };
+    QVector3D f{ 25.f, 10.f,  4.f };    // C
+//    QVector3D g{  0.f,-10.f,  0.f };
+//    QVector3D h{  0.f,-10.f,  0.f };
+//    QVector3D i{ 15.f, -5.f,  4.f };    // D
 
     Bakken = new Bakke(plainShader);
     /* Første quad */
@@ -192,15 +195,31 @@ void RenderWindow::init()
 
 
     /* Ballen */
-    Ball = new OctahedronBall(3, 0.5f);
+    Ball = new OctahedronBall(3, 0.25f);
     Ball->m_shader = plainShader;
     Ball->init();
-    Ball->mMatrix.translate(1.f, 9.f, 6.f);
+//    StartPosition = {1.f, 9.f, 4.f};
+    StartPosition = {a.x() + 1, a.y() - 1, a.z()};
+    Ball->MoveTo(StartPosition);
     mMap.insert({"Ball", Ball});
 
     /* Skybox / CubeMap */
     cubemap = new CubeMap(cubeMapShader);
 
+
+    /* VELOCITY TEST */
+    QVector3D Velocity(0, 0, -10);
+    QVector3D n1(-1,0,0);
+    QVector3D n2(-0.707, 0, 0.707);
+    QVector3D n = n1 + n2; n.normalize();
+//    QVector3D NextVelocity{ Velocity - (2*(Velocity*n)*n) };
+    QVector3D NextVelocity{ Velocity.length() * n.x(), Velocity.length() * n.y(), Velocity.length() * n.z() * -1.f };
+
+    qDebug() << "n: " << n;
+    qDebug() << "NextVelocity: " << NextVelocity;
+
+    QVector3D n3{ QVector3D::crossProduct(QVector3D(0,0,1), QVector3D::crossProduct(n2, QVector3D(0,0,1))) }; n3.normalize();
+    qDebug() << "n3: " << n3;
 
     /* BarycentricCoordinate test */
     QVector3D a1{ 0, 0, 0 };
@@ -214,7 +233,7 @@ void RenderWindow::init()
     };
 
 //    mLogger->logText("BarycentricCoordinate: " + std::to_string(Location));
-    qDebug() << "BarycentricCoordinate: " << Location;
+//    qDebug() << "BarycentricCoordinate: " << Location;
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 }
@@ -332,6 +351,11 @@ void RenderWindow::togglePause(bool bPause)
 void RenderWindow::GoNextFrame()
 {
     if (!bGoNextFrame){ bGoNextFrame = true; }
+}
+
+void RenderWindow::Reset()
+{
+    Ball->Reset(StartPosition);
 }
 
 

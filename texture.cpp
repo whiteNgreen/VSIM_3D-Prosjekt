@@ -29,7 +29,7 @@ Texture::Texture(const std::string& filename, bool alpha/*=0*/): QOpenGLFunction
 
 void Texture::stbImageTexture(const std::string &filename)
 {
-    std::string filepath = "../3Dprog22/Assets/" + filename;
+    std::string filepath = "../VSIM_3D-Prosjekt/Assets/" + filename;
 
     uint32_t texture;
     glGenTextures(1, &texture);
@@ -66,7 +66,7 @@ void Texture::stbImageTexture(const std::string &filename)
 
 uint32_t Texture::getTexture(const std::string &filename, bool alpha/* = 0*/)
 {
-    std::string filepath = "../3Dprog22/Assets/" + filename;
+    std::string filepath = "../VSIM_3D-Prosjekt/Assets/" + filename;
 
     uint32_t texture;
     glGenTextures(1, &texture);

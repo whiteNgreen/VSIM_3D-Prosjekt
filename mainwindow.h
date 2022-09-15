@@ -31,6 +31,10 @@ private slots:
 
     void on_NextFrameButton_pressed();
 
+    void on_ResetButton_pressed();
+
+//    void on_PauseButton_toggled(bool checked);
+
 private:
     ///called from the constructor. Initializes different parts of the program.
     void init();
