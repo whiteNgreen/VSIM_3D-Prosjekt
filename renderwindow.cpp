@@ -269,7 +269,7 @@ void RenderWindow::render()
         movement += DeltaTime;
 //        Ball->mMatrix.translate(sinf(movement) / 10.f, 0, 0);
 
-        Ball->GetSurfaceInfo(Bakken, DeltaTime);
+        Ball->CalculatePhysics(Bakken, DeltaTime);
 
         bGoNextFrame = false;
     }

@@ -57,16 +57,16 @@ void OctahedronBall::MoveTo(const QVector3D &Location)
     Position = mMatrix.column(3).toVector3D();
 }
 
-void OctahedronBall::CalculatePhysics(float DeltaTime)
-{
+//void OctahedronBall::CalculatePhysics(float DeltaTime)
+//{
 //    GetSurfaceInfo();
 //    CalculateAcceleration(QVector3D SurfaceNormal);
 //    UpdateVelocity(QVector3D Acceleration, float DeltaTime);
 //    UpdatePosition();
-}
+//}
 
 
-void OctahedronBall::GetSurfaceInfo(Bakke* bakken, float DeltaTime/* hakk metode atm */)
+void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
 {
     FrameCount++;
     mLogger->logText("Frame: " + std::to_string(FrameCount));
@@ -82,6 +82,9 @@ void OctahedronBall::GetSurfaceInfo(Bakke* bakken, float DeltaTime/* hakk metode
     unsigned int FinalTriangleIndex{};
     unsigned int tmpIndex{};
     float HeightDifferenceObjectSurface;
+    float FrictionConstant{};
+    QVector3D NormalForce{};
+    float FrictionForce{};
 
 
     /* 1: Posisjonen og om den er på en overflate */
@@ -94,15 +97,36 @@ void OctahedronBall::GetSurfaceInfo(Bakke* bakken, float DeltaTime/* hakk metode
             if (tmpIndex){ break; }
         }
 
+        /* Hard koda friksjon konstant per triangel */
+        switch(tmpIndex)
+        {
+        case 1:
+            FrictionConstant = 0.2;
+            break;
+        case 2:
+            FrictionConstant = 0.2;
+            break;
+        case 3:
+            FrictionConstant = 0.4;
+            break;
+        case 4:
+            FrictionConstant = 0.2;
+            break;
+        case 0:
+            FrictionConstant = 0;
+            break;
+        default:
+            break;
+        }
 
-//        QVector3D Height;
-//        /* Setter kula oppå flata */
-//        if (tmpIndex)
-//        {
-//            float theta = (M_PI/2) - (asinf(SurfaceNormal.z()));
+        /* Normal force */
+        NormalForce = SurfaceNormal * Gravity * SurfaceNormal.z();
+        LogVector("NormalForce: ", NormalForce);
 
-//            Height = { 0, 0, radius / sinf(theta) };
-//        }
+        /* Friction Force */
+        FrictionForce = FrictionConstant * NormalForce.length();
+
+
         /* Sjekk om ballen er oppå flata */
         HeightDifferenceObjectSurface = SurfacePosition.z() - ObjectPosition.z();
         HeightDifferenceObjectSurface += radius;
@@ -120,12 +144,9 @@ void OctahedronBall::GetSurfaceInfo(Bakke* bakken, float DeltaTime/* hakk metode
         }
     }
 
-    /*  ISSUE
-     * "Mister" triangelet når den skal regne ut akselerasjonen for en frame ved kollisjonen mellom to planes
-     */
     /* 2: Akselerasjonen */
     {
-        CalculateAcceleration(SurfaceNormal, FinalTriangleIndex);
+        CalculateAcceleration(SurfaceNormal, FrictionForce, FinalTriangleIndex);
         LogVector("Acceleration", Acceleration);
     }
 
@@ -152,7 +173,6 @@ void OctahedronBall::GetSurfaceInfo(Bakke* bakken, float DeltaTime/* hakk metode
             if (tmpIndex){ break; }
         }
     }
-
 
     /* 5: Er den nye posisjonen gyldig? Nei?: Gjør justeringer */
     {
@@ -207,7 +227,6 @@ void OctahedronBall::GetSurfaceInfo(Bakke* bakken, float DeltaTime/* hakk metode
         }
     }
 
-
     /* 6: Sett den endelige posisjonen */
     {
         MoveTo(ObjectPosition);
@@ -217,98 +236,15 @@ void OctahedronBall::GetSurfaceInfo(Bakke* bakken, float DeltaTime/* hakk metode
     mLogger->logText("Index : " + std::to_string(tmpIndex));
     mLogger->logText("TIndex: " + std::to_string(mTriangleIndex));
 
-
-//    UpdatePosition(TranslationAdjustment);
-
-//    /* Sjekk om ballen er oppå flata */
-//    HeightDifferenceObjectSurface = SurfacePosition.z() - Position.z();
-//    mLogger->logText("HeightDifference: " + std::to_string(HeightDifferenceObjectSurface));
-
-//    /* Hvis ballen er under flata så korrigerer vi høyden i z-aksen til å matche surface */
-//    if (HeightDifferenceObjectSurface >= 0.f)
-//    {
-//        TranslationAdjustment += QVector3D(0, 0, HeightDifferenceObjectSurface);
-//        std::string sTranslationAdjustment = "( " + std::to_string(TranslationAdjustment.x()) + ", " +std::to_string(TranslationAdjustment.y()) + ", " + std::to_string(TranslationAdjustment.z()) + " )";
-//        mLogger->logText("TranslationAdjustment: " + sTranslationAdjustment);
-
-//        mTriangleIndex = tmpIndex;
-
-//    }
-//    mMatrix.translate(TranslationAdjustment);
-
-//    mMatrix.translate(0, 0, Position.z() - SurfacePosition.z());
-
-//    QVector3D P1 = mMatrix.column(3).toVector3D() + (SurfaceNormal * -1.f * radius);
-//    QVector3D P0 = bakken->GetCoordinateWithBaryc(Baryc, tmpIndex);
-
-//    QVector3D Yv = (P1 - P0) * SurfaceNormal;
-//    qDebug() << "Yv: " << Yv;
-
-//    /* Korriger Velocity når ballen lander på et triangle */
-//    if (mTriangleIndex == 0)
-//    {
-//        qDebug() << "ON TRIANGLE";
-//        QVector3D Vetter = Velocity - (2*(Velocity * SurfaceNormal) * SurfaceNormal);
-//        qDebug() << "Vetter: " << Vetter;
-//        Velocity = Vetter;
-//    }
-
-//    if (Yv.z() <= radius - 0.2f)
-//    {
-//        /* Korrigerer posisjonen */
-//        mMatrix.translate(SurfaceNormal * (radius - Yv.z()));
-//    }
-//    else
-//    {
-//        mTriangleIndex = 0;
-//    }
-
-    /* Sjekker om den kom over til en ny triangel */
-//    if (tmpIndex != mTriangleIndex && mTriangleIndex != 0)
-//    {
-//        /* Finner to krysningspunkter og tar gjennsomsnittet av de to som det endelige svaret */
-//        QVector3D CrossingPoint;
-//        QVector3D n;
-//        {
-//            QVector3D Prev_Baryc;
-//            QVector3D Prev_SurfaceHeight;
-//            QVector3D Prev_SurfaceNormal;
-//            bakken->BarySentricCoordinate(Position_PreviousFrame, Prev_Baryc, Prev_SurfaceHeight, Prev_SurfaceNormal, mTriangleIndex);
-
-//            /* Sjekker om en av u,v,w baryc koordinatene er under 0 */
-//            {
-//                if (Prev_Baryc.x() < 0.f){ Prev_Baryc.setX(0.f); }
-//                if (Prev_Baryc.y() < 0.f){ Prev_Baryc.setY(0.f); }
-//                if (Prev_Baryc.z() < 0.f){ Prev_Baryc.setZ(0.f); }
-//            }
-//            CrossingPoint = bakken->GetCoordinateWithBaryc(Prev_Baryc, mTriangleIndex);
-
-//            n = SurfaceNormal + Prev_SurfaceNormal; n.normalize();
-//        }
-
-//        Velocity = Velocity - (2*(Velocity*n)*n);
-//    }
-
-    /* Regner ut Akselerasjon, Hastighet og setter Posisjonen */
-
-//    qDebug() << "Acceleration_PreviousFrame: " << Acceleration_PreviousFrame;
-//    qDebug() << "Acceleration: " << Acceleration;
-//    if (Acceleration_PreviousFrame.z() < 0.f && Acceleration.z() >= 0.f)
-//    {
-//        mLogger->logText("Fra negativ til positiv");
-//    }
-
-//    UpdateVelocity(DeltaTime);
-
-//    UpdatePosition(TranslationAdjustment);
-    /* Test for z posisjonen */
-//    mMatrix.translate( 0, 0, SurfaceHeight.z() - Position.z() );
-
     mLogger->logText("");
+
+    /*  ISSUE
+     * "Mister" triangelet når den skal regne ut akselerasjonen for en frame ved kollisjonen mellom to planes
+     */
 }
 
 
-void OctahedronBall::CalculateAcceleration(QVector3D SurfaceNormal, const int SurfaceIndex)
+void OctahedronBall::CalculateAcceleration(QVector3D SurfaceNormal, float FrictionForce, const int SurfaceIndex)
 {
     Acceleration_PreviousFrame = Acceleration;
 
@@ -326,6 +262,11 @@ void OctahedronBall::CalculateAcceleration(QVector3D SurfaceNormal, const int Su
         float ny{ SurfaceNormal.y() };
         float nz{ SurfaceNormal.z() };
         Acceleration = QVector3D{nx * nz * Gravity, ny * nz * Gravity, (nz * nz * Gravity) - Gravity};
+
+        QVector3D FrictionForceVector{ Acceleration * -1.f };
+        FrictionForceVector.normalize();
+        FrictionForceVector *= FrictionForce;
+        Acceleration += FrictionForceVector;
 
         return;
     }

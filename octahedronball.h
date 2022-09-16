@@ -53,8 +53,8 @@ public:
     void CalculatePhysics(float DeltaTime);
 
     /* Gets information about the surface the object is on */
-    void GetSurfaceInfo(Bakke* bakken, float DeltaTime);
-    void CalculateAcceleration(QVector3D SurfaceNormal, const int SurfaceIndex);
+    void CalculatePhysics(Bakke* bakken, float DeltaTime);
+    void CalculateAcceleration(QVector3D SurfaceNormal, float FrictionForce, const int SurfaceIndex);
     void UpdateVelocity(float DeltaTime);
     void UpdatePosition(const QVector3D& Adjustment);
 
