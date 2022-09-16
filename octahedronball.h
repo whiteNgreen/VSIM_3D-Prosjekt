@@ -50,13 +50,13 @@ private:
     QVector3D Position;
 
 public:
-    void CalculatePhysics(float DeltaTime);
+//    void CalculatePhysics(float DeltaTime);
 
     /* Gets information about the surface the object is on */
     void CalculatePhysics(Bakke* bakken, float DeltaTime);
     void CalculateAcceleration(QVector3D SurfaceNormal, float FrictionForce, const int SurfaceIndex);
     void UpdateVelocity(float DeltaTime);
-    void UpdatePosition(const QVector3D& Adjustment);
+//    void UpdatePosition(const QVector3D& Adjustment);
 
 
 /* Rendering */

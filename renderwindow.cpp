@@ -165,23 +165,20 @@ void RenderWindow::init()
 //    light->mMatrix.translate(0, 0, 20);
 //    mMap.insert({"light", light});
 
-    /* Bakken */
-    SimpleObject* FlatGround = new SimpleObject(Type::Plane, 10.f, plainShader);
-    FlatGround->init();
-    FlatGround->mMatrix.rotate(-90.f, 1, 0 ,0);
+//    SimpleObject* FlatGround = new SimpleObject(Type::Plane, 10.f, plainShader);
+//    FlatGround->init();
+//    FlatGround->mMatrix.rotate(-90.f, 1, 0 ,0);
 //    mMap.insert({"FlatGround", FlatGround});
 
 
-    /* Vertex punkter */                // Hvilke punkter som er de samme som den fysiske modellen
-    QVector3D a{ -5.f, 10.f,  4.f };    // A
-    QVector3D b{  0.f,  0.f,  0.f };
-    QVector3D c{ 12.5f,  -5.f,  2.f };    // B
-    QVector3D d{ 5.f, 10.f,  0.f };
-    QVector3D e{ 25.f, -5.f,  0.f };
-    QVector3D f{ 25.f, 10.f,  4.f };    // C
-//    QVector3D g{  0.f,-10.f,  0.f };
-//    QVector3D h{  0.f,-10.f,  0.f };
-//    QVector3D i{ 15.f, -5.f,  4.f };    // D
+    /* Bakken */
+    /* Vertex punkter */
+    QVector3D a{  0.f, 30.f,   8.6f };        // A
+    QVector3D b{  0.f,  0.f,   0.f };
+    QVector3D c{ 30.f,  0.f, 6.4f };      // B
+    QVector3D d{ 30.f, 30.f,    0.f };
+    QVector3D e{ 60.f, 0.f,   0.f };
+    QVector3D f{ 60.f, 30.f,   4.f };        // C
 
     Bakken = new Bakke(plainShader);
     /* Første quad */
@@ -198,10 +195,11 @@ void RenderWindow::init()
     Ball = new OctahedronBall(3, 0.25f);
     Ball->m_shader = plainShader;
     Ball->init();
-//    StartPosition = {1.f, 9.f, 4.f};
     StartPosition = {a.x() + 1, a.y() - 1, a.z()};
     Ball->MoveTo(StartPosition);
     mMap.insert({"Ball", Ball});
+
+
 
     /* Skybox / CubeMap */
     cubemap = new CubeMap(cubeMapShader);

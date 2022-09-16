@@ -33,10 +33,6 @@ void OctahedronBall::Reset(const QVector3D& StartLocation)
 {
     /* Move to start location */
     MoveTo(StartLocation);
-//    QVector3D Move = StartLocation - mMatrix.column(3).toVector3D();
-//    mMatrix.translate(Move);
-//    Position = mMatrix.column(3).toVector3D();
-//    Position_PreviousFrame = Position;
 
     /* Reset Movement Variables */
     Velocity_PreviousFrame *= 0.f;
@@ -56,14 +52,6 @@ void OctahedronBall::MoveTo(const QVector3D &Location)
     mMatrix.translate(Move);
     Position = mMatrix.column(3).toVector3D();
 }
-
-//void OctahedronBall::CalculatePhysics(float DeltaTime)
-//{
-//    GetSurfaceInfo();
-//    CalculateAcceleration(QVector3D SurfaceNormal);
-//    UpdateVelocity(QVector3D Acceleration, float DeltaTime);
-//    UpdatePosition();
-//}
 
 
 void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
@@ -101,16 +89,16 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
         switch(tmpIndex)
         {
         case 1:
-            FrictionConstant = 0.2;
+            FrictionConstant = 0.278;
             break;
         case 2:
-            FrictionConstant = 0.2;
+            FrictionConstant = 0.278;
             break;
         case 3:
             FrictionConstant = 0.4;
             break;
         case 4:
-            FrictionConstant = 0.2;
+            FrictionConstant = 0.278;
             break;
         case 0:
             FrictionConstant = 0;
@@ -270,15 +258,15 @@ void OctahedronBall::UpdateVelocity(float DeltaTime)
     Velocity += Acceleration * DeltaTime;
 }
 
-void OctahedronBall::UpdatePosition(const QVector3D& Adjustment)
-{
-    Position_PreviousFrame = Position;
+//void OctahedronBall::UpdatePosition(const QVector3D& Adjustment)
+//{
+//    Position_PreviousFrame = Position;
 
-    mMatrix.translate(Velocity);
-    mMatrix.translate( Adjustment );
-//    mMatrix.translate( mMatrix.column(3).toVector3D() - SurfacePosition );
-    Position = mMatrix.column(3).toVector3D();
-}
+//    mMatrix.translate(Velocity);
+//    mMatrix.translate( Adjustment );
+////    mMatrix.translate( mMatrix.column(3).toVector3D() - SurfacePosition );
+//    Position = mMatrix.column(3).toVector3D();
+//}
 
 void OctahedronBall::subDivide(const QVector3D &a, const QVector3D &b, const QVector3D &c, int n)
 {
