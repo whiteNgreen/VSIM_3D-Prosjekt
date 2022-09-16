@@ -183,14 +183,6 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
             mLogger->logText("CAME OVER TO A NEW TRIANGLE!");
         }
 
-//        QVector3D Height;
-//        /* Setter kula oppå flata */
-//        if (tmpIndex)
-//        {
-//            float theta = (M_PI/2) - (asinf(SurfaceNormal.z()));
-
-//            Height = { 0, 0, radius / sinf(theta) };
-//        }
         /* Sjekk om ballen er oppå flata */
         HeightDifferenceObjectSurface = SurfacePosition2.z() - ObjectPosition.z();
         HeightDifferenceObjectSurface += radius;
