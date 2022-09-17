@@ -23,6 +23,7 @@ public:
     virtual void init(/*GLuint matrixUniform*/);
     virtual void draw();
     virtual void draw(QMatrix4x4& projectionMatrix, QMatrix4x4& viewMatrix){}
+    virtual void drawLines();
 
     Position2D getPosition2D();
     QVector2D getPositionVector2D();

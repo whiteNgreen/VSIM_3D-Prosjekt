@@ -29,14 +29,15 @@ OctahedronBall::OctahedronBall(int recursions, float m_radius)
     CalculateNormals();
 }
 
-void OctahedronBall::Reset(const QVector3D& StartLocation)
+void OctahedronBall::Reset(const QVector3D& StartLocation, const QVector3D StartVelocity)
 {
     /* Move to start location */
     MoveTo(StartLocation);
 
     /* Reset Movement Variables */
-    Velocity_PreviousFrame *= 0.f;
-    Velocity *= 0.f;
+//    Velocity_PreviousFrame *= 0.f;
+//    Velocity *= 0.f;
+    SetStartVelocity(StartVelocity);
     Acceleration_PreviousFrame *= 0.f;
     Acceleration *= 0.f;
 
@@ -51,6 +52,12 @@ void OctahedronBall::MoveTo(const QVector3D &Location)
     QVector3D Move = Location - mMatrix.column(3).toVector3D();
     mMatrix.translate(Move);
     Position = mMatrix.column(3).toVector3D();
+}
+
+void OctahedronBall::SetStartVelocity(const QVector3D StartVelocity)
+{
+    Velocity_PreviousFrame = StartVelocity;
+    Velocity = StartVelocity;
 }
 
 
@@ -89,16 +96,16 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
         switch(tmpIndex)
         {
         case 1:
-            FrictionConstant = 0.278;
+            FrictionConstant = 1;
             break;
         case 2:
-            FrictionConstant = 0.278;
+            FrictionConstant = 1;
             break;
         case 3:
             FrictionConstant = 0.4;
             break;
         case 4:
-            FrictionConstant = 0.278;
+            FrictionConstant = 0.2;
             break;
         case 0:
             FrictionConstant = 0;
@@ -113,6 +120,7 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
 
         /* Friction Force */
         FrictionForce = FrictionConstant * NormalForce.length();
+        mLogger->logText("FrictionForce: " + std::to_string(FrictionForce));
 
 
         /* Sjekk om ballen er oppå flata */
@@ -243,10 +251,24 @@ void OctahedronBall::CalculateAcceleration(QVector3D SurfaceNormal, float Fricti
         float nz{ SurfaceNormal.z() };
         Acceleration = QVector3D{nx * nz * Gravity, ny * nz * Gravity, (nz * nz * Gravity) - Gravity};
 
-        QVector3D FrictionForceVector{ Acceleration * -1.f };
-        FrictionForceVector.normalize();
-        FrictionForceVector *= FrictionForce;
-        Acceleration += FrictionForceVector;
+        /* Calculate the friction force/acceleration */
+//        if (Velocity.length() > 0.001f)
+        {
+//            QVector3D FrictionForceVector{ Acceleration * -1.f };
+            QVector3D FrictionForceVector{ Velocity * -1.f };   // Sets the direction of the friction acceleration to be opposite of the velocity
+            FrictionForceVector.normalize();
+
+            /* If the friction force is larger than the velocity vectors length. Normalize it to velocity's length */
+            if (FrictionForce > Velocity.length())
+            {
+                FrictionForce = Velocity.length();
+            }
+            mLogger->logText("FrictionForce: " + std::to_string(FrictionForce));
+
+            FrictionForceVector *= FrictionForce;
+            LogVector("FrictionForceVector: ", FrictionForceVector);
+            Acceleration += FrictionForceVector;
+        }
 
         return;
     }
@@ -256,6 +278,11 @@ void OctahedronBall::UpdateVelocity(float DeltaTime)
 {
     Velocity_PreviousFrame = Velocity;
     Velocity += Acceleration * DeltaTime;
+    /* If velocity is extremely small set it to 0 */
+    if (Velocity.length() < 0.0001f)
+    {
+        Velocity *= 0.f;
+    }
 }
 
 //void OctahedronBall::UpdatePosition(const QVector3D& Adjustment)

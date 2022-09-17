@@ -46,13 +46,24 @@ public:
     void togglePause(bool bPause);
     void GoNextFrame();
     void Reset();
+    void ChangeBallStartPosition();
+
+    void ChangeBallStartPositionX(const float x);
+    void ChangeBallStartPositionY(const float y);
+    void ChangeBallStartPositionZ(const float z);
+
+    void ChangeBallStartVelocity();
+    void ChangeBallStartVelocityX(const float x);
+    void ChangeBallStartVelocityY(const float y);
+    void ChangeBallStartVelocityZ(const float z);
+
 
 private slots:
     void render();          //the actual render - function
 
 private:
     void init();            //initialize things we need before rendering
-    bool bPlay{};           // Determines if the game is paused or not
+    bool bSimulate{};           // Determines if the game is paused or not
     bool bGoNextFrame{};    // If the game should calculate the next frame or not
     bool bGameMode{};       // Editor mode or Gaming mode
     bool bEndGame{};        // Game is done or not
@@ -96,7 +107,9 @@ private:    // Objekter i scenen
     SimpleObject* Axis{nullptr};
 
     Bakke* Bakken{nullptr};
+
     QVector3D StartPosition{};
+    QVector3D StartVelocity{};
     OctahedronBall* Ball{nullptr};
 
 //    std::vector<VisualObject*> mVisualObjects;

@@ -75,6 +75,27 @@ void MainWindow::init()
     Logger::getInstance()->setMainWindow(this);;
 }
 
+void MainWindow::SetBallStartPositionText(const QVector3D startPos)
+{
+    ui->BallStartPositionSetX->setValue(startPos.x());
+    ui->BallStartPositionSetY->setValue(startPos.y());
+    ui->BallStartPositionSetZ->setValue(startPos.z());
+}
+
+void MainWindow::SetBallStartVelocityText(const QVector3D startVel)
+{
+    ui->BallStartVelocitySetX->setValue(startVel.x());
+    ui->BallStartVelocitySetY->setValue(startVel.y());
+    ui->BallStartVelocitySetZ->setValue(startVel.z());
+}
+
+void MainWindow::SetBallCurrentPositionText(const QVector3D Position)
+{
+    ui->BallCurrentPositionX->setValue(Position.x());
+    ui->BallCurrentPositionY->setValue(Position.y());
+    ui->BallCurrentPositionZ->setValue(Position.z());
+}
+
 
 //File menu Exit closes the program
 void MainWindow::on_fileExit_triggered()
@@ -84,24 +105,24 @@ void MainWindow::on_fileExit_triggered()
 
 // Task 6: GUI elements ----------------------------------------------------------
 static bool editor{true};
-void MainWindow::on_GameMode_toggled(bool checked)
-{
-    mRenderWindowContainer->setFocus();
-    if (checked)
-    {
-        ui->GameMode->setText("Editor Mode");
-        t_GameMode = "Game";
-        editor = false;
-    }
-    else
-    {
-        ui->GameMode->setText("Game Mode");
-        t_GameMode = "Editor";
-        editor = true;
-    }
-    on_PauseButton_clicked(checked);
-    mRenderWindow->togglePlay(checked);
-}
+//void MainWindow::on_GameMode_toggled(bool checked)
+//{
+//    mRenderWindowContainer->setFocus();
+//    if (checked)
+//    {
+//        ui->GameMode->setText("Editor Mode");
+//        t_GameMode = "Game";
+//        editor = false;
+//    }
+//    else
+//    {
+//        ui->GameMode->setText("Game Mode");
+//        t_GameMode = "Editor";
+//        editor = true;
+//    }
+//    on_PauseButton_clicked(checked);
+//    mRenderWindow->togglePlay(checked);
+//}
 
 void MainWindow::on_PauseButton_clicked(bool checked)
 {
@@ -119,7 +140,7 @@ void MainWindow::on_PauseButton_clicked(bool checked)
     }
     else
     {
-        ui->NextFrameButton->setText("Next Frame");
+        ui->NextFrameButton->setText("Next\nFrame");
         t_Paused = "Pause";
     }
     ui->TextMode->setText(t_GameMode + '\n' + t_Paused);
@@ -150,6 +171,39 @@ void MainWindow::on_ResetButton_pressed()
 //    ui->PauseButton->setText("Simulate");
 //    on_PauseButton_clicked(true);
 //    ui->PauseButton->toggle();
+//    on_PauseButton_clicked(true);
     mRenderWindow->Reset();
+}
+
+
+void MainWindow::on_BallStartPositionSetX_valueChanged(double arg1)
+{
+    mRenderWindow->ChangeBallStartPositionX(arg1);
+}
+
+void MainWindow::on_BallStartPositionSetY_valueChanged(double arg1)
+{
+    mRenderWindow->ChangeBallStartPositionY(arg1);
+}
+
+void MainWindow::on_BallStartPositionSetZ_valueChanged(double arg1)
+{
+    mRenderWindow->ChangeBallStartPositionZ(arg1);
+}
+
+
+void MainWindow::on_BallStartVelocitySetX_valueChanged(double arg1)
+{
+    mRenderWindow->ChangeBallStartVelocityX(arg1);
+}
+
+void MainWindow::on_BallStartVelocitySetY_valueChanged(double arg1)
+{
+    mRenderWindow->ChangeBallStartVelocityY(arg1);
+}
+
+void MainWindow::on_BallStartVelocitySetZ_valueChanged(double arg1)
+{
+    mRenderWindow->ChangeBallStartVelocityZ(arg1);
 }
 

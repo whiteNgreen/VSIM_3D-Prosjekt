@@ -172,31 +172,49 @@ void RenderWindow::init()
 
 
     /* Bakken */
-    /* Vertex punkter */
-    QVector3D a{  0.f, 30.f,   8.6f };        // A
-    QVector3D b{  0.f,  0.f,   0.f };
-    QVector3D c{ 30.f,  0.f, 6.4f };      // B
-    QVector3D d{ 30.f, 30.f,    0.f };
-    QVector3D e{ 60.f, 0.f,   0.f };
-    QVector3D f{ 60.f, 30.f,   4.f };        // C
-
     Bakken = new Bakke(plainShader);
-    /* Første quad */
-    Bakken->CreateTriangle(a, b, d);
-    Bakken->CreateTriangle(b, c, d);
-    /* Andre quad */
-    Bakken->CreateTriangle(d, c, e);
-    Bakken->CreateTriangle(d, e, f);
+
+    /* Oblig 1 Surface */
+//    {
+//        /* Vertex punkter */
+//        QVector3D a{  0.f, 30.f,   8.6f };        // A
+//        QVector3D b{  0.f,  0.f,   0.f };
+//        QVector3D c{ 30.f,  0.f, 6.4f };      // B
+//        QVector3D d{ 30.f, 30.f,    0.f };
+//        QVector3D e{ 60.f, 0.f,   0.f };
+//        QVector3D f{ 60.f, 30.f,   4.f };        // C
+
+//        /* Første quad */
+//        Bakken->CreateTriangle(a, b, d);
+//        Bakken->CreateTriangle(b, c, d);
+//        /* Andre quad */
+//        Bakken->CreateTriangle(d, c, e);
+//        Bakken->CreateTriangle(d, e, f);
+//    }
+
+    /* Flat surface */
+    {
+        QVector3D a{ 0, 0, 0 };
+        QVector3D b{ 100, 0, 0 };
+        QVector3D c{ 100, 20, 0 };
+        QVector3D d{ 0, 20, 0 };
+
+        Bakken->CreateTriangle(a, b, c);
+        Bakken->CreateTriangle(d, a, c);
+    }
 
     Bakken->init();
 
 
     /* Ballen */
-    Ball = new OctahedronBall(3, 0.25f);
+    Ball = new OctahedronBall(3, 1.f);
     Ball->m_shader = plainShader;
     Ball->init();
-    StartPosition = {a.x() + 1, a.y() - 1, a.z()};
+//    StartPosition = {a.x() + 1, a.y() - 1, a.z()};
+    StartPosition = { 2, 2, Ball->GetRadius() };
+    StartVelocity = { 0, 0, 0 };
     Ball->MoveTo(StartPosition);
+    Ball->SetStartVelocity(StartVelocity);
     mMap.insert({"Ball", Ball});
 
 
@@ -233,6 +251,13 @@ void RenderWindow::init()
 //    mLogger->logText("BarycentricCoordinate: " + std::to_string(Location));
 //    qDebug() << "BarycentricCoordinate: " << Location;
 
+    /* Setter mMainWindow verdier til GUI elementene til å matche det jeg hardkoder her */
+    if (mMainWindow)
+    {
+        mMainWindow->SetBallStartPositionText(StartPosition);
+        mMainWindow->SetBallStartVelocityText(StartVelocity);
+    }
+
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 }
 
@@ -261,13 +286,19 @@ void RenderWindow::render()
     checkForGLerrors();
 
     /* Calculate Physics for mMap objects */
-    if (bPlay || bGoNextFrame)
+    if (bSimulate || bGoNextFrame)
     {
         static float movement{};
         movement += DeltaTime;
 //        Ball->mMatrix.translate(sinf(movement) / 10.f, 0, 0);
 
         Ball->CalculatePhysics(Bakken, DeltaTime);
+
+        /* Viser ballens nåverende posisjon */
+        if (mMainWindow)
+        {
+            mMainWindow->SetBallCurrentPositionText(Ball->getPositionVector3D());
+        }
 
         bGoNextFrame = false;
     }
@@ -279,6 +310,7 @@ void RenderWindow::render()
         it.second->draw();
     }
     Bakken->draw();
+//    Bakken->drawLines();  // Linjene burde være hvite eller noe sånt så de kan faktisk ses sammen med meshen
 
         /* Draw other objects */
         Axis->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
@@ -342,8 +374,8 @@ void RenderWindow::togglePlay(bool bPlay)
 
 void RenderWindow::togglePause(bool bPause)
 {
-    bPlay = bPause;
-    qDebug() << "Playing: " << bPlay;
+    bSimulate = bPause;
+    qDebug() << "Playing: " << bSimulate;
 }
 
 void RenderWindow::GoNextFrame()
@@ -353,7 +385,68 @@ void RenderWindow::GoNextFrame()
 
 void RenderWindow::Reset()
 {
-    Ball->Reset(StartPosition);
+    Ball->Reset(StartPosition, StartVelocity);
+}
+
+void RenderWindow::ChangeBallStartPosition()
+{
+//    StartPosition += v;
+    if (!bSimulate)
+    {
+        if (Ball)
+        {
+            Ball->MoveTo(StartPosition);
+        }
+    }
+}
+
+/* Setter start posisjonen med GUI elementene */
+void RenderWindow::ChangeBallStartPositionX(const float x)
+{
+    StartPosition.setX(x);
+    ChangeBallStartPosition();
+}
+
+void RenderWindow::ChangeBallStartPositionY(const float y)
+{
+    StartPosition.setY(y);
+    ChangeBallStartPosition();
+}
+
+void RenderWindow::ChangeBallStartPositionZ(const float z)
+{
+    StartPosition.setZ(z);
+    ChangeBallStartPosition();
+}
+
+void RenderWindow::ChangeBallStartVelocity()
+{
+    if (!bSimulate)
+    {
+        if (Ball)
+        {
+            Ball->SetStartVelocity(StartVelocity);
+        }
+    }
+}
+
+/* Setter start hastigheten med GUI elementene */
+void RenderWindow::ChangeBallStartVelocityX(const float x)
+{
+    StartVelocity.setX(x);
+    ChangeBallStartVelocity();
+}
+
+void RenderWindow::ChangeBallStartVelocityY(const float y)
+{
+    StartVelocity.setY(y);
+    ChangeBallStartVelocity();
+}
+
+void RenderWindow::ChangeBallStartVelocityZ(const float z)
+{
+    StartVelocity.setZ(z);
+    ChangeBallStartVelocity();
 }
 
 
@@ -482,7 +575,7 @@ void RenderWindow::handleInput()
     }
 
 
-    if (!bPlay)
+    if (!bSimulate)
     {
         forward = 0;
         right = 0;

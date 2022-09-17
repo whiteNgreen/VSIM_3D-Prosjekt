@@ -24,8 +24,10 @@ public:
     OctahedronBall(int recursions, float radius);
     ~OctahedronBall(){}
 
-    void Reset(const QVector3D& StartLocation);
+    void Reset(const QVector3D& StartLocation, const QVector3D StartVelocity);
     void MoveTo(const QVector3D& Location);
+
+    float GetRadius() const { return radius; }
 
 
 /* Bakken ballen skal være på */
@@ -51,6 +53,9 @@ private:
 
 public:
 //    void CalculatePhysics(float DeltaTime);
+
+    /* Setter start verdier */
+    void SetStartVelocity(const QVector3D StartVelocity);
 
     /* Gets information about the surface the object is on */
     void CalculatePhysics(Bakke* bakken, float DeltaTime);

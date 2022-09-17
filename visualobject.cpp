@@ -56,6 +56,17 @@ void VisualObject::draw()
     glBindVertexArray(0);
 }
 
+void VisualObject::drawLines()
+{
+    m_shader->setUniformMatrix("mMatrix", mMatrix);
+
+    glBindVertexArray( mVAO );
+    glDrawElements(GL_LINE_LOOP, mIndices.size(), GL_UNSIGNED_INT, nullptr);
+//    glDrawArrays(GL_LINE_LOOP, 0, mVertices.size());
+
+    glBindVertexArray(0);
+}
+
 Position2D VisualObject::getPosition2D()
 {
     return std::pair<float, float>{mMatrix.column(3).x(), mMatrix.column(3).y()};
@@ -63,12 +74,12 @@ Position2D VisualObject::getPosition2D()
 
 QVector2D VisualObject::getPositionVector2D()
 {
-    return {mMatrix.column(3).x(), mMatrix.column(3).y()};
+    return mMatrix.column(3).toVector2D();
 }
 
 QVector3D VisualObject::getPositionVector3D()
 {
-    return {mMatrix.column(3).x(), mMatrix.column(3).y(), mMatrix.column(3).z()};
+    return mMatrix.column(3).toVector3D();
 }
 
 
