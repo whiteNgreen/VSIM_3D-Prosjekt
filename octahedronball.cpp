@@ -257,10 +257,7 @@ void OctahedronBall::CalculateAcceleration(QVector3D SurfaceNormal, float Fricti
             FrictionAcceleration = { Velocity * -1.f };   // Sets the direction of the friction acceleration to be opposite of the velocity // NOT CORRECT METHOD, JUST TEMPORARY
             FrictionAcceleration.normalize();
 
-
             FrictionAcceleration *= FrictionForce;
-
-            LogVector("FrictionAcceleration: ", FrictionAcceleration);
         }
 
         return;
@@ -273,12 +270,9 @@ void OctahedronBall::UpdateVelocity(float DeltaTime)
 
     /* Calculate new velocity */
     QVector3D NewVelocity = Velocity + (Acceleration * DeltaTime);
-    mLogger->logText("NewVelocity Length: " + std::to_string(NewVelocity.length()));
 
     /* Kalkulere ny hastighet fra friksjonkraften. Som kan ikke føre til at hastigheten vil kunne gå i motsatt retning */
     QVector3D FrictionVelocityChange = (FrictionAcceleration * DeltaTime);
-    LogVector("FrictionVelocityChange: ", FrictionVelocityChange);
-    mLogger->logText("FrictionVelocityChange Length: " + std::to_string(FrictionVelocityChange.length()));
 
     /* Hvis forandringen i hastigheten fra friksjonen får objektet til å gå bakover så vil det heller bare stoppe og gå til 0 */
     if (FrictionVelocityChange.length() > NewVelocity.length())
@@ -286,12 +280,7 @@ void OctahedronBall::UpdateVelocity(float DeltaTime)
         FrictionVelocityChange *= NewVelocity.length()/FrictionVelocityChange.length();
 
     }
-    LogVector("FrictionVelocityChange: ", FrictionVelocityChange);
-
-    LogVector("NewVelocity: ", NewVelocity);
     NewVelocity += FrictionVelocityChange;
-    LogVector("NewVelocity: ", NewVelocity);
-    mLogger->logText("NewVelocity Length: " + std::to_string(NewVelocity.length()));
 
     Velocity = NewVelocity;
     /* If velocity is extremely small set it to 0 */
