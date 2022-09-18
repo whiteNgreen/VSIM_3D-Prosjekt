@@ -43,6 +43,7 @@ private:
 
     QVector3D Acceleration_PreviousFrame;
     QVector3D Acceleration;
+    QVector3D FrictionAcceleration;
 
     QVector3D Velocity_PreviousFrame;
     QVector3D Velocity;
