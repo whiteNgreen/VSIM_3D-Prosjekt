@@ -43,7 +43,9 @@ private:
 
     QVector3D Acceleration_PreviousFrame;
     QVector3D Acceleration;
+    float FrictionForce;
     QVector3D FrictionAcceleration;
+    QVector3D NormalForce;
 
     QVector3D Velocity_PreviousFrame;
     QVector3D Velocity;
@@ -58,10 +60,12 @@ public:
     /* Setter start verdier */
     void SetStartVelocity(const QVector3D StartVelocity);
 
-    /* Gets information about the surface the object is on */
+    /* Kalkulerer fysikken. Inneholder all logikken som trengs til det */
     void CalculatePhysics(Bakke* bakken, float DeltaTime);
     void CalculateAcceleration(QVector3D SurfaceNormal, float FrictionForce, const int SurfaceIndex);
     void UpdateVelocity(float DeltaTime);
+
+    void SetNormalForce(const QVector3D SurfaceNormal);
 //    void UpdatePosition(const QVector3D& Adjustment);
 
 

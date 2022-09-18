@@ -78,8 +78,8 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
     unsigned int tmpIndex{};
     float HeightDifferenceObjectSurface;
     float FrictionConstant{};
-    QVector3D NormalForce{};
-    float FrictionForce{};
+//    QVector3D NormalForce{};
+//    float FrictionForce{};
 
 
     /* 1: Posisjonen og om den er på en overflate */
@@ -115,7 +115,7 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
         }
 
         /* Normal force */
-        NormalForce = SurfaceNormal * Gravity * SurfaceNormal.z();
+        SetNormalForce(SurfaceNormal);
         LogVector("NormalForce: ", NormalForce);
 
         /* Friction Force */
@@ -244,9 +244,9 @@ void OctahedronBall::CalculateAcceleration(QVector3D SurfaceNormal, float Fricti
 
         return;
     }
+    /* else If ball is on a surface */
     else
     {
-        /* If ball is on a surface */
         float nx{ SurfaceNormal.x() };
         float ny{ SurfaceNormal.y() };
         float nz{ SurfaceNormal.z() };
@@ -254,10 +254,12 @@ void OctahedronBall::CalculateAcceleration(QVector3D SurfaceNormal, float Fricti
 
         /* Calculate the friction force/acceleration */
         {
-            FrictionAcceleration = { Velocity * -1.f };   // Sets the direction of the friction acceleration to be opposite of the velocity // NOT CORRECT METHOD, JUST TEMPORARY
+            /* Finn retningen av friksjonskraften */
+            FrictionAcceleration = QVector3D::crossProduct(SurfaceNormal, QVector3D::crossProduct(Velocity, SurfaceNormal)) * -1.f;
             FrictionAcceleration.normalize();
 
             FrictionAcceleration *= FrictionForce;
+            LogVector("Friction Acceleration: ", FrictionAcceleration);
         }
 
         return;
@@ -288,6 +290,11 @@ void OctahedronBall::UpdateVelocity(float DeltaTime)
     {
         Velocity *= 0.f;
     }
+}
+
+void OctahedronBall::SetNormalForce(const QVector3D SurfaceNormal)
+{
+    NormalForce = SurfaceNormal * Gravity * SurfaceNormal.z();
 }
 
 //void OctahedronBall::UpdatePosition(const QVector3D& Adjustment)
