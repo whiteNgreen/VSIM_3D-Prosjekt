@@ -206,7 +206,7 @@ void RenderWindow::init()
 
     /* Bakke på enden av den flate overflaten */
     float SlopeLength{8.f};
-    float SlopeHeight{8.f};
+    float SlopeHeight{4.f};
 
         QVector3D e{ SlopeLength + FlatLength, 0, SlopeHeight };
         QVector3D f{ SlopeLength + FlatLength, Width, SlopeHeight };
@@ -223,7 +223,7 @@ void RenderWindow::init()
     Ball->m_shader = plainShader;
     Ball->init();
 //    StartPosition = {a.x() + 1, a.y() - 1, a.z()};
-    StartPosition = { 10, 2, Ball->GetRadius() + 4 };
+    StartPosition = { 5, 2, Ball->GetRadius() + 4 };
     StartVelocity = { 0, 0, 0 };
     Ball->MoveTo(StartPosition);
     Ball->SetStartVelocity(StartVelocity);
@@ -235,30 +235,37 @@ void RenderWindow::init()
     cubemap = new CubeMap(cubeMapShader);
 
 
+
     /* VELOCITY TEST */
-    QVector3D Velocity(0, 0, -10);
-    QVector3D n1(-1,0,0);
-    QVector3D n2(-0.707, 0, 0.707);
-    QVector3D n = n1 + n2; n.normalize();
-//    QVector3D NextVelocity{ Velocity - (2*(Velocity*n)*n) };
-    QVector3D NextVelocity{ Velocity.length() * n.x(), Velocity.length() * n.y(), Velocity.length() * n.z() * -1.f };
+    QVector3D k(sqrtf(2)/2, 0, sqrtf(2)/2);
+    qDebug() << "k: " << k;
+    QVector3D V(0, 0, -2);
+    QVector3D Vetter{ V - (2*(V*k)*k) };
+    qDebug() << "Vetter: " << Vetter;
 
-    qDebug() << "n: " << n;
-    qDebug() << "NextVelocity: " << NextVelocity;
+//    QVector3D Velocity(0, 0, -10);
+//    QVector3D n1(-1,0,0);
+//    QVector3D n2(-0.707, 0, 0.707);
+//    QVector3D n = n1 + n2; n.normalize();
+////    QVector3D NextVelocity{ Velocity - (2*(Velocity*n)*n) };
+//    QVector3D NextVelocity{ Velocity.length() * n.x(), Velocity.length() * n.y(), Velocity.length() * n.z() * -1.f };
 
-    QVector3D n3{ QVector3D::crossProduct(QVector3D(0,0,1), QVector3D::crossProduct(n2, QVector3D(0,0,1))) }; n3.normalize();
-    qDebug() << "n3: " << n3;
+//    qDebug() << "n: " << n;
+//    qDebug() << "NextVelocity: " << NextVelocity;
 
-    /* BarycentricCoordinate test */
-    QVector3D a1{ 0, 0, 0 };
-    QVector3D b1{ 5, 0, 5 };
-    QVector3D c1{ 2.5, 5, 0 };
-    QVector3D Baryc{ 0.5, 0.5, 0 };
-    QVector3D Location{
-            a1.x() * Baryc.x() + b1.x() * Baryc.y() + c1.x() * Baryc.z(),
-            a1.y() * Baryc.x() + b1.y() * Baryc.y() + c1.y() * Baryc.z(),
-            a1.z() * Baryc.x() + b1.z() * Baryc.y() + c1.z() * Baryc.z(),
-    };
+//    QVector3D n3{ QVector3D::crossProduct(QVector3D(0,0,1), QVector3D::crossProduct(n2, QVector3D(0,0,1))) }; n3.normalize();
+//    qDebug() << "n3: " << n3;
+
+//    /* BarycentricCoordinate test */
+//    QVector3D a1{ 0, 0, 0 };
+//    QVector3D b1{ 5, 0, 5 };
+//    QVector3D c1{ 2.5, 5, 0 };
+//    QVector3D Baryc{ 0.5, 0.5, 0 };
+//    QVector3D Location{
+//            a1.x() * Baryc.x() + b1.x() * Baryc.y() + c1.x() * Baryc.z(),
+//            a1.y() * Baryc.x() + b1.y() * Baryc.y() + c1.y() * Baryc.z(),
+//            a1.z() * Baryc.x() + b1.z() * Baryc.y() + c1.z() * Baryc.z(),
+//    };
 
 //    mLogger->logText("BarycentricCoordinate: " + std::to_string(Location));
 //    qDebug() << "BarycentricCoordinate: " << Location;

@@ -109,5 +109,12 @@ QVector3D Bakke::GetCoordinateWithBaryc(const QVector3D &Baryc, const int index)
     };
 }
 
+QVector3D Bakke::GetNormalFromIndex(const int Index)
+{
+    int Vertex = (Index * 3);
+
+    return mVertices[Vertex-3].getNormal();
+}
+
 
 
