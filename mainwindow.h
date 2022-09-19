@@ -67,6 +67,7 @@ public:
     void SetBallStartPositionText(const QVector3D startPos);
     void SetBallStartVelocityText(const QVector3D startVel);
     void SetBallCurrentPositionText(const QVector3D Position);
+    void SetElapsedTime(const float Time);
 };
 
 #endif // MAINWINDOW_H

@@ -95,20 +95,23 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
         /* Hard koda friksjon konstant per triangel */
         switch(tmpIndex)
         {
-        case 1:
+        case 1: case 2: case 3: case 4:
             FrictionConstant = 0.2;
             break;
-        case 2:
-            FrictionConstant = 0.2;
-            break;
-        case 3:
-            FrictionConstant = 0.4;
-            break;
-        case 4:
-            FrictionConstant = 0.2;
-            break;
+//        case 1:
+//            FrictionConstant = 0.2;
+//            break;
+//        case 2:
+//            FrictionConstant = 0.2;
+//            break;
+//        case 3:
+//            FrictionConstant = 0.2;
+//            break;
+//        case 4:
+//            FrictionConstant = 0.2;
+//            break;
         case 0:
-            FrictionConstant = 0;
+            FrictionConstant = 1;
             break;
         default:
             break;
@@ -124,12 +127,13 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
 
 
         /* Sjekk om ballen er oppå flata */
-        HeightDifferenceObjectSurface = SurfacePosition.z() - ObjectPosition.z();
-        HeightDifferenceObjectSurface += radius;
+//        HeightDifferenceObjectSurface = SurfacePosition.z() - ObjectPosition.z();
+//        HeightDifferenceObjectSurface += radius;
+        HeightDifferenceObjectSurface = GetDistanceToSurface(ObjectPosition, SurfacePosition, SurfaceNormal) - radius;
         mLogger->logText("HeightDifference: " + std::to_string(HeightDifferenceObjectSurface));
 
         /* Hvis ballen er under flata så korrigerer vi høyden i z-aksen til å matche surface */
-        if (HeightDifferenceObjectSurface >= 0.f)
+        if (HeightDifferenceObjectSurface <= /*radius*/0.f)
         {
             FinalTriangleIndex = tmpIndex;
         }
@@ -159,7 +163,7 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
     /* 4: Den nye posisjonen */
     {
         /* Juster posisjonen etter hastigheten */
-        ObjectPosition += Velocity;
+        ObjectPosition += Velocity * DeltaTime;
 
         /* Sjekk de barysentriske koordinatene etter den nye posisjonen */
         for (unsigned int i{1}; i <= bakken->mTriangleIndex; i++)
@@ -177,15 +181,27 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
         {
             /* Oppdater velocity */
             mLogger->logText("CAME OVER TO A NEW TRIANGLE!");
+
+            QVector3D n{ SurfaceNormal + SurfaceNormal2 }; n.normalize();
+
+            QVector3D Vetter{ Velocity - (2*(Velocity*n)*n) };
+            ObjectPosition -= Velocity * DeltaTime;
+            LogVector("Previous surface Velocity", Velocity);
+            Velocity = Vetter;
+            ObjectPosition += Vetter * DeltaTime;
+            LogVector("n", n);
+            LogVector("New surface Vetter", Vetter);
         }
 
         /* Sjekk om ballen er oppå flata */
-        HeightDifferenceObjectSurface = SurfacePosition2.z() - ObjectPosition.z();
-        HeightDifferenceObjectSurface += radius;
+//        HeightDifferenceObjectSurface = SurfacePosition2.z() - ObjectPosition.z();
+//        HeightDifferenceObjectSurface += radius;
+        HeightDifferenceObjectSurface = GetDistanceToSurface(ObjectPosition, SurfacePosition2, SurfaceNormal2) - radius;
         mLogger->logText("HeightDifference: " + std::to_string(HeightDifferenceObjectSurface));
+        LogVector("SurfaceNormal2: ", SurfaceNormal2);
 
         /* Hvis ballen er under flata så korrigerer vi høyden i z-aksen til å matche surface */
-        if (HeightDifferenceObjectSurface >= 0.f)
+        if (HeightDifferenceObjectSurface <= /*radius*/0.f)
         {
             if (mTriangleIndex == 0)
             {
@@ -195,16 +211,18 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
                 QVector3D n{ SurfaceNormal + n2 }; n.normalize();
 
                 QVector3D Vetter{ Velocity - (2 * (Velocity*n)*n) };
+                ObjectPosition -= Velocity * DeltaTime;
+                LogVector("Free fall Velocity", Velocity);
                 Velocity = Vetter;
-                ObjectPosition += Vetter;
-                LogVector("Velocity", Velocity);
+                ObjectPosition += Vetter * DeltaTime;
                 LogVector("n", n);
-                LogVector("Vetter", Vetter);
+                LogVector("From fall to surface Vetter", Vetter);
             }
 
-            HeightDifferenceObjectSurface = SurfacePosition2.z() - ObjectPosition.z();
-            HeightDifferenceObjectSurface += radius;
-            TranslationAdjustment += QVector3D(0, 0, HeightDifferenceObjectSurface);
+//            HeightDifferenceObjectSurface = SurfacePosition2.z() - ObjectPosition.z();
+//            HeightDifferenceObjectSurface += radius;
+//            TranslationAdjustment += QVector3D(0, 0, HeightDifferenceObjectSurface);
+            TranslationAdjustment += SurfaceNormal2 * -1.f * HeightDifferenceObjectSurface; // Hvorfor må jeg gange med -1?
             ObjectPosition += TranslationAdjustment;
 
             LogVector("TranslationAdjustment", TranslationAdjustment);
@@ -288,13 +306,18 @@ void OctahedronBall::UpdateVelocity(float DeltaTime)
     /* If velocity is extremely small set it to 0 */
     if (Velocity.length() < 0.0001f)
     {
-        Velocity *= 0.f;
+//        Velocity *= 0.f;
     }
 }
 
 void OctahedronBall::SetNormalForce(const QVector3D SurfaceNormal)
 {
     NormalForce = SurfaceNormal * Gravity * SurfaceNormal.z();
+}
+
+float OctahedronBall::GetDistanceToSurface(const QVector3D Position, const QVector3D SurfacePosition, const QVector3D SurfaceNormal)
+{
+    return QVector3D{(Position - SurfacePosition) * SurfaceNormal}.length();
 }
 
 //void OctahedronBall::UpdatePosition(const QVector3D& Adjustment)

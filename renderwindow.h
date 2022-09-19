@@ -106,6 +106,8 @@ private:    // Objekter i scenen
 
     SimpleObject* Axis{nullptr};
 
+/* Visualisering og Simulering */
+    float ElapsedTime{};
     Bakke* Bakken{nullptr};
 
     QVector3D StartPosition{};

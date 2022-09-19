@@ -192,16 +192,28 @@ void RenderWindow::init()
 //        Bakken->CreateTriangle(d, e, f);
 //    }
 
-    /* Flat surface */
-    {
+    float Width{10.f};
+    /* Flat overflate */
+    float FlatLength{8.f};
+
         QVector3D a{ 0, 0, 0 };
-        QVector3D b{ 100, 0, 0 };
-        QVector3D c{ 100, 20, 0 };
-        QVector3D d{ 0, 20, 0 };
+        QVector3D b{ FlatLength, 0, 0 };
+        QVector3D c{ FlatLength, Width, 0 };
+        QVector3D d{ 0, Width, 0 };
 
         Bakken->CreateTriangle(a, b, c);
         Bakken->CreateTriangle(d, a, c);
-    }
+
+    /* Bakke på enden av den flate overflaten */
+    float SlopeLength{8.f};
+    float SlopeHeight{8.f};
+
+        QVector3D e{ SlopeLength + FlatLength, 0, SlopeHeight };
+        QVector3D f{ SlopeLength + FlatLength, Width, SlopeHeight };
+
+        Bakken->CreateTriangle(c, e, f);
+        Bakken->CreateTriangle(c, b, e);
+
 
     Bakken->init();
 
@@ -211,7 +223,7 @@ void RenderWindow::init()
     Ball->m_shader = plainShader;
     Ball->init();
 //    StartPosition = {a.x() + 1, a.y() - 1, a.z()};
-    StartPosition = { 2, 2, Ball->GetRadius() };
+    StartPosition = { 10, 2, Ball->GetRadius() + 4 };
     StartVelocity = { 0, 0, 0 };
     Ball->MoveTo(StartPosition);
     Ball->SetStartVelocity(StartVelocity);
@@ -288,9 +300,11 @@ void RenderWindow::render()
     /* Calculate Physics for mMap objects */
     if (bSimulate || bGoNextFrame)
     {
-        static float movement{};
-        movement += DeltaTime;
+//        static float movement{};
+//        movement += DeltaTime;
 //        Ball->mMatrix.translate(sinf(movement) / 10.f, 0, 0);
+
+        ElapsedTime += DeltaTime;
 
         Ball->CalculatePhysics(Bakken, DeltaTime);
 
@@ -298,6 +312,7 @@ void RenderWindow::render()
         if (mMainWindow)
         {
             mMainWindow->SetBallCurrentPositionText(Ball->getPositionVector3D());
+            mMainWindow->SetElapsedTime(ElapsedTime);
         }
 
         bGoNextFrame = false;
@@ -386,13 +401,20 @@ void RenderWindow::GoNextFrame()
 void RenderWindow::Reset()
 {
     Ball->Reset(StartPosition, StartVelocity);
+
+    ElapsedTime = 0.f;
+    if (mMainWindow)
+    {
+        mMainWindow->SetBallCurrentPositionText(Ball->getPositionVector3D());
+        mMainWindow->SetElapsedTime(ElapsedTime);
+    }
 }
 
 void RenderWindow::ChangeBallStartPosition()
 {
-//    StartPosition += v;
     if (!bSimulate)
     {
+
         if (Ball)
         {
             Ball->MoveTo(StartPosition);

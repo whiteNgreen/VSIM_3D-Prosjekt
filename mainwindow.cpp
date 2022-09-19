@@ -96,6 +96,14 @@ void MainWindow::SetBallCurrentPositionText(const QVector3D Position)
     ui->BallCurrentPositionZ->setValue(Position.z());
 }
 
+void MainWindow::SetElapsedTime(const float Time)
+{
+    ui->ElapsedTime->setText(QString::fromStdString(std::to_string(Time)) + "s");
+//    ui->ElapsedTime->append("s");
+    ui->ElapsedTime->setAlignment(Qt::AlignCenter);
+}
+
+
 
 //File menu Exit closes the program
 void MainWindow::on_fileExit_triggered()
@@ -173,6 +181,8 @@ void MainWindow::on_ResetButton_pressed()
 //    ui->PauseButton->toggle();
 //    on_PauseButton_clicked(true);
     mRenderWindow->Reset();
+//    ui->ElapsedTime->setText("0.02s");
+//    ui->ElapsedTime->setAlignment(Qt::AlignCenter);
 }
 
 

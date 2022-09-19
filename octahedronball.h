@@ -66,6 +66,8 @@ public:
     void UpdateVelocity(float DeltaTime);
 
     void SetNormalForce(const QVector3D SurfaceNormal);
+
+    float GetDistanceToSurface(const QVector3D Position, const QVector3D SurfacePosition, const QVector3D SurfaceNormal);
 //    void UpdatePosition(const QVector3D& Adjustment);
 
 
