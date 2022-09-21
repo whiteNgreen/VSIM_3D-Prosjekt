@@ -64,6 +64,7 @@ private:
 
 public:
     Ui::MainWindow* GetUi() const { return ui; }
+    void OnStart();
     void SetBallStartPositionText(const QVector3D startPos);
     void SetBallStartVelocityText(const QVector3D startVel);
     void SetBallCurrentPositionText(const QVector3D Position);

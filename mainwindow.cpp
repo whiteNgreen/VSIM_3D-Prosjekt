@@ -75,6 +75,16 @@ void MainWindow::init()
     Logger::getInstance()->setMainWindow(this);;
 }
 
+void MainWindow::OnStart()
+{
+//    /* Justere på teksten i gamemode boksen */
+//    {
+//        ui->TextMode->setText(t_GameMode);
+//        ui->TextMode->setAlignment(Qt::AlignCenter);
+//        ui->TextMode->setFontWeight(500);
+//    }
+}
+
 void MainWindow::SetBallStartPositionText(const QVector3D startPos)
 {
     ui->BallStartPositionSetX->setValue(startPos.x());
@@ -144,14 +154,20 @@ void MainWindow::on_PauseButton_clicked(bool checked)
     if (checked)
     {
         ui->NextFrameButton->setText("");
-        t_Paused = "Playing";
+        t_Paused = "Simulating";
     }
     else
     {
         ui->NextFrameButton->setText("Next\nFrame");
         t_Paused = "Pause";
     }
-    ui->TextMode->setText(t_GameMode + '\n' + t_Paused);
+//    /* Justere på teksten i gamemode boksen */
+//    {
+//        ui->TextMode->setFontWeight(1000);
+//        ui->TextMode->setText(t_GameMode);
+//        ui->TextMode->setAlignment(Qt::AlignCenter);
+//    }
+    /* Pauser spillet i Rendervinduet */
     mRenderWindow->togglePause(checked);
 }
 

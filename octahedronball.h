@@ -3,7 +3,16 @@
 
 #include "visualobject.h"
 #include "Objects/bakke.h"
+#include <unordered_map>
 
+struct SurfaceContactPoint
+{
+    unsigned int Index{};
+    float FrictionConstant{};
+    QVector3D Baryc{};
+    QVector3D SurfacePosition{};
+    QVector3D SurfaceNormal{};
+};
 
 class OctahedronBall : public VisualObject
 {
@@ -14,7 +23,7 @@ private:
 
     int m_rekursjoner;
     int m_indeks;
-    float radius; // Radiusen til ballen
+    float mRadius; // Radiusen til ballen
     void lagTriangel(const QVector3D& v1, const QVector3D& v2, const QVector3D& v3);
     void subDivide(const QVector3D& a, const QVector3D& b, const QVector3D&c, int n);
     void CalculateNormals();
@@ -24,23 +33,31 @@ public:
     OctahedronBall(int recursions, float radius);
     ~OctahedronBall(){}
 
-    void Reset(const QVector3D& StartLocation, const QVector3D StartVelocity);
+    void Reset(Bakke* bakken, const QVector3D& StartLocation, const QVector3D StartVelocity);
     void MoveTo(const QVector3D& Location);
 
-    float GetRadius() const { return radius; }
+    /* Pre Sim Flytting */
+    /* Når objektet flyttes på utenfor simuleringen */
+    void PreSim_MoveTo(const QVector3D& Location, Bakke* bakken);
+    /* Brukes når ballen blir dratt rundt utenfor simuleringen */
+    void SetSurfaceIndex(Bakke* bakken);
+
+    float GetRadius() const { return mRadius; }
 
 
 /* Bakken ballen skal være på */
 private:
     Bakke* mBakken{nullptr};
-    unsigned int mTriangleIndex{0};
+    unsigned int mTriangleIndex{0}; // Indeksen senteret er over
+
+    std::unordered_map<unsigned int, SurfaceContactPoint> mSurfaceContactPoints;
 
 /* Fysikk utregning */
 private:
 
     float Gravity = 9.81f;  // m/s^2
     float Mass = 1.f;       // kg
-    float Elasticity = 0.8f; // How much velocity is kept when it bounces of an angle
+    float Elasticity = 0.4f; // How much velocity is kept, along the surface normal, when it bounces
 
     QVector3D Acceleration_PreviousFrame;
     QVector3D Acceleration;
@@ -69,6 +86,8 @@ public:
 
     float GetDistanceToSurface(const QVector3D Position, const QVector3D SurfacePosition, const QVector3D SurfaceNormal);
 
+    void ProjectCollisionVelocity(const QVector3D n);
+
 /* Rendering */
 public:
     void init() override;
@@ -79,8 +98,10 @@ public:
 public:
 
 };
-
 #endif // OCTAHEDRONBALL_H
+
+
+
 
 /* Logging functions */
 inline void Log(const std::string log)

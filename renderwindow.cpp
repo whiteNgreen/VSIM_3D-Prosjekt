@@ -192,27 +192,30 @@ void RenderWindow::init()
 //        Bakken->CreateTriangle(d, e, f);
 //    }
 
-    float Width{10.f};
-    /* Flat overflate */
-    float FlatLength{8.f};
+    /* Flat overflate med en bakke på enden */
+    {
+        float Width{ 10.f };
+        /* Flat overflate */
+        float FlatLength{8.f};
 
-        QVector3D a{ 0, 0, 0 };
-        QVector3D b{ FlatLength, 0, 0 };
-        QVector3D c{ FlatLength, Width, 0 };
-        QVector3D d{ 0, Width, 0 };
+            QVector3D a{ 0, 0, 0 };
+            QVector3D b{ FlatLength, 0, 0 };
+            QVector3D c{ FlatLength, Width, 0 };
+            QVector3D d{ 0, Width, 0 };
 
-        Bakken->CreateTriangle(a, b, c);
-        Bakken->CreateTriangle(d, a, c);
+            Bakken->CreateTriangle(a, b, c);
+            Bakken->CreateTriangle(d, a, c);
 
-    /* Bakke på enden av den flate overflaten */
-    float SlopeLength{8.f};
-    float SlopeHeight{4.f};
+        /* Bakke på enden av flaten */
+        float SlopeLength{8.f};
+        float SlopeHeight{8.f};
 
-        QVector3D e{ SlopeLength + FlatLength, 0, SlopeHeight };
-        QVector3D f{ SlopeLength + FlatLength, Width, SlopeHeight };
+            QVector3D e{ SlopeLength + FlatLength, 0, SlopeHeight };
+            QVector3D f{ SlopeLength + FlatLength, Width, SlopeHeight };
 
-        Bakken->CreateTriangle(c, e, f);
-        Bakken->CreateTriangle(c, b, e);
+            Bakken->CreateTriangle(c, e, f);
+            Bakken->CreateTriangle(c, b, e);
+    }
 
 
     Bakken->init();
@@ -223,9 +226,9 @@ void RenderWindow::init()
     Ball->m_shader = plainShader;
     Ball->init();
 //    StartPosition = {a.x() + 1, a.y() - 1, a.z()};
-    StartPosition = { 5, 2, Ball->GetRadius() + 4 };
+    StartPosition = { 0, 2, Ball->GetRadius() + 2 };
     StartVelocity = { 0, 0, 0 };
-    Ball->MoveTo(StartPosition);
+    Ball->PreSim_MoveTo(StartPosition, Bakken);
     Ball->SetStartVelocity(StartVelocity);
     mMap.insert({"Ball", Ball});
 
@@ -237,42 +240,42 @@ void RenderWindow::init()
 
 
     /* VELOCITY TEST */
-    QVector3D k(sqrtf(2)/2, 0, sqrtf(2)/2);
-    qDebug() << "k: " << k;
-    QVector3D V(0, 0, -2);
-    QVector3D Vetter{ V - (2*(V*k)*k) };
-    qDebug() << "Vetter: " << Vetter;
+//    QVector3D a{2, -3, 5};
+//    QVector3D b{3, 6, -4};
+//    QVector3D proj = (QVector3D::dotProduct(a,b)/QVector3D::dotProduct(b,b))*b;
+//    qDebug() << "proj: " << proj;
 
-//    QVector3D Velocity(0, 0, -10);
-//    QVector3D n1(-1,0,0);
-//    QVector3D n2(-0.707, 0, 0.707);
-//    QVector3D n = n1 + n2; n.normalize();
-////    QVector3D NextVelocity{ Velocity - (2*(Velocity*n)*n) };
-//    QVector3D NextVelocity{ Velocity.length() * n.x(), Velocity.length() * n.y(), Velocity.length() * n.z() * -1.f };
 
-//    qDebug() << "n: " << n;
-//    qDebug() << "NextVelocity: " << NextVelocity;
+//    /* Projeksjonen av Velocity på b (orthogonal til n på vei mot Velocity)
+//     * For å kunne finne hastigheten en vektor burde ha parallelt med bakken når den lander     //vProj
+//     * OG for å finne hastigheten ballen skal ha perpendikulært med bakken                      //hProj
+//     * */
+//    float F = 0;    // Forenklet friksjons akselerasjon
+//    float E = 0.2;
+//    QVector3D Vc{ 0, 1, -7.67 };    // Inkommende Hastigheten
+//    QVector3D V{};                  // Ny Hastighet
+//    QVector3D n{ 0.707, 0, 0.707 }; // SurfaceNormal
+//    QVector3D B{ QVector3D::crossProduct(n, QVector3D::crossProduct(Vc.normalized(), n)) };
+//    QVector3D vProj = (QVector3D::dotProduct(Vc,B)/QVector3D::dotProduct(B,B))*B;
+//    QVector3D hProj = (QVector3D::dotProduct(Vc,n)/QVector3D::dotProduct(n,n))*n;
+//    V = (vProj - (vProj*F)) + (n * hProj.length() * E);
 
-//    QVector3D n3{ QVector3D::crossProduct(QVector3D(0,0,1), QVector3D::crossProduct(n2, QVector3D(0,0,1))) }; n3.normalize();
-//    qDebug() << "n3: " << n3;
+//    /* Hvis vinkelen mellom Hastigheten*-1 og SurfaceNormal er 0
+//     * så reverserer vi bare Hastigheten og ganger med Elasticity
+//     * */
+//    if (QVector3D::dotProduct(Vc.normalized()*-1, n) == 1)
+//    {
+//        V = Vc * -1 * E;
+//    }
+//    qDebug() << "vProj: " << vProj;
+//    qDebug() << "hProj: " << hProj;
+//    qDebug() << "V: " << V;
 
-//    /* BarycentricCoordinate test */
-//    QVector3D a1{ 0, 0, 0 };
-//    QVector3D b1{ 5, 0, 5 };
-//    QVector3D c1{ 2.5, 5, 0 };
-//    QVector3D Baryc{ 0.5, 0.5, 0 };
-//    QVector3D Location{
-//            a1.x() * Baryc.x() + b1.x() * Baryc.y() + c1.x() * Baryc.z(),
-//            a1.y() * Baryc.x() + b1.y() * Baryc.y() + c1.y() * Baryc.z(),
-//            a1.z() * Baryc.x() + b1.z() * Baryc.y() + c1.z() * Baryc.z(),
-//    };
-
-//    mLogger->logText("BarycentricCoordinate: " + std::to_string(Location));
-//    qDebug() << "BarycentricCoordinate: " << Location;
 
     /* Setter mMainWindow verdier til GUI elementene til å matche det jeg hardkoder her */
     if (mMainWindow)
     {
+        mMainWindow->OnStart();
         mMainWindow->SetBallStartPositionText(StartPosition);
         mMainWindow->SetBallStartVelocityText(StartVelocity);
     }
@@ -407,7 +410,7 @@ void RenderWindow::GoNextFrame()
 
 void RenderWindow::Reset()
 {
-    Ball->Reset(StartPosition, StartVelocity);
+    Ball->Reset(Bakken, StartPosition, StartVelocity);
 
     ElapsedTime = 0.f;
     if (mMainWindow)
@@ -424,7 +427,7 @@ void RenderWindow::ChangeBallStartPosition()
 
         if (Ball)
         {
-            Ball->MoveTo(StartPosition);
+            Ball->PreSim_MoveTo(StartPosition, Bakken);
         }
     }
 }
