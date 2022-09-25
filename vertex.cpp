@@ -113,6 +113,37 @@ void Vertex::setUV(float U, float V)
     m_uv[1] = V;
 }
 
+void Vertex::SubtractPosition(float x, float y, float z)
+{
+//    QVector3D Subtraction{ x, y, z };
+//    QVector3D OldPos{ m_xyz[0], m_xyz[1], m_xyz[2] };
+//    QVector3D NewPos = OldPos - Subtraction;
+
+    m_xyz[0] -= x;
+    m_xyz[1] -= y;
+    m_xyz[2] -= z;
+//    m_xyz[0] = NewPos.x();
+//    m_xyz[1] = NewPos.y();
+//    m_xyz[2] = NewPos.z();
+}
+
+void Vertex::SubtractPosition(const QVector3D Subtraction)
+{
+    QVector3D OldPos{ m_xyz[0], m_xyz[1], m_xyz[2] };
+    QVector3D NewPos = OldPos - Subtraction;
+
+    m_xyz[0] = NewPos.x();
+    m_xyz[1] = NewPos.y();
+    m_xyz[2] = NewPos.z();
+}
+
+void Vertex::ScalePosition(float scale)
+{
+    m_xyz[0] *= scale;
+    m_xyz[1] *= scale;
+    m_xyz[2] *= scale;
+}
+
 QVector3D Vertex::getPosition()
 {
     return {m_xyz[0], m_xyz[1], m_xyz[2]};

@@ -11,6 +11,7 @@ INCLUDEPATH += \
 
 SOURCES += main.cpp \
     Objects/bakke.cpp \
+    Objects/hoydekart.cpp \
     Shaders/shader.cpp \
     aabbfence.cpp \
     beziercurve.cpp \
@@ -35,7 +36,9 @@ SOURCES += main.cpp \
     visualobject.cpp
 
 HEADERS += \
+    StandAlone/LoggerFunctions.h \
     Objects/bakke.h \
+    Objects/hoydekart.h \
     Shaders/shader.h \
     aabbfence.h \
     beziercurve.h \
@@ -73,4 +76,5 @@ DISTFILES += \
     Shaders/plainshader.vert \
     Shaders/textureshader.frag \
     Shaders/textureshader.vert \
+    HoydeKart/SmallArea.txt \
 

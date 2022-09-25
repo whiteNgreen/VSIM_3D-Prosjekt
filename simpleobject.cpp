@@ -107,6 +107,7 @@ void SimpleObject::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)
     m_shader->setUniformMatrix("mMatrix", mMatrix);
     m_shader->setUniformMatrix("pMatrix", projectionMatrix);
     m_shader->setUniformMatrix("vMatrix", viewMatrix);
+
     glBindVertexArray( mVAO );
 
     if (m_type == Type::Axis){

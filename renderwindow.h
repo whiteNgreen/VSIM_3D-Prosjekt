@@ -20,6 +20,7 @@
 #include "aabbfence.h"
 #include "octahedronball.h"
 #include "Objects/bakke.h"
+#include "Objects/hoydekart.h"
 
 class QOpenGLContext;
 class Shader;
@@ -108,11 +109,17 @@ private:    // Objekter i scenen
 
 /* Visualisering og Simulering */
     float ElapsedTime{};
+    /* Liten test overflate */
     Bakke* Bakken{nullptr};
 
+
+    /* En Rullende Ball */
     QVector3D StartPosition{};
     QVector3D StartVelocity{};
     OctahedronBall* Ball{nullptr};
+
+    /* Hoydekart */
+    HoydeKart* BigArea{nullptr};
 
 //    std::vector<VisualObject*> mVisualObjects;
 

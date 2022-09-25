@@ -57,7 +57,7 @@ void OctahedronBall::PreSim_MoveTo(const QVector3D &Location, Bakke *bakken)
     MoveTo(Location);
     SetSurfaceIndex(bakken);
 
-    LogValue("PreSim Surface", mTriangleIndex);
+//    LogValue("PreSim Surface", mTriangleIndex);
 }
 
 void OctahedronBall::SetSurfaceIndex(Bakke* bakken)
@@ -84,7 +84,7 @@ void OctahedronBall::SetSurfaceIndex(Bakke* bakken)
 
     /* Sjekk om ballen er oppå flata */
     float HeightDifferenceObjectSurface = GetDistanceToSurface(ObjectPosition, SurfacePosition, SurfaceNormal) - radius;
-    mLogger->logText("HeightDifference: " + std::to_string(HeightDifferenceObjectSurface));
+//    mLogger->logText("HeightDifference: " + std::to_string(HeightDifferenceObjectSurface));
 
     /* Hvis ballen er under flata så korrigerer vi høyden i z-aksen til å matche surface */
     if (HeightDifferenceObjectSurface >= 0.001f)
@@ -413,7 +413,7 @@ float OctahedronBall::GetDistanceToSurface(const QVector3D Position, const QVect
     float dotprod = QVector3D::dotProduct(SurfaceNormal, Y) / (SurfaceNormal.length() + Y.length());
     if (dotprod > 0) { dotprod = 1; }
     else if (dotprod < 0) { dotprod = -1; }
-    LogFloat("Distance Dotprod: ", dotprod);
+//    LogValue("Distance Dotprod: ", dotprod);
     return Y.length() * dotprod;
 }
 
@@ -516,6 +516,7 @@ void OctahedronBall::init()
 void OctahedronBall::draw()
 {
     m_shader->setUniformMatrix("mMatrix", mMatrix);
+    glUseProgram(m_shader->getProgram());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_texture);
@@ -533,9 +534,11 @@ void OctahedronBall::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)
     m_shader->setUniformMatrix("vMatrix", viewMatrix);
 
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_2D, m_texture);
+    glBindVertexArray( mVAO );
     glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
+
     glBindVertexArray(0);
 }
 

@@ -50,9 +50,26 @@ void VisualObject::draw()
     /* Om annet ikke er spesifisert så antar vi at den bruker 'plainshader' */
     m_shader->setUniformMatrix("mMatrix", mMatrix);
 
+    glUseProgram(m_shader->getProgram());
+
     glBindVertexArray( mVAO );
     glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
 
+    glBindVertexArray(0);
+}
+
+void VisualObject::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)
+{
+    glUseProgram(m_shader->getProgram());
+    m_shader->setUniformMatrix("mMatrix", mMatrix);
+    m_shader->setUniformMatrix("pMatrix", projectionMatrix);
+    m_shader->setUniformMatrix("vMatrix", viewMatrix);
+
+    glBindVertexArray( mVAO );
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+    glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 }
 

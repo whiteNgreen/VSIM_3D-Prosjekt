@@ -33,6 +33,11 @@ public:
     void setNormal(QVector3D normal);
     void setUV(float U, float V);
 
+    void SubtractPosition(float x, float y, float z);
+    void SubtractPosition(const QVector3D Subraction);
+
+    void ScalePosition(float scale);
+
     QVector3D getPosition();
     QVector3D getNormal();
     QVector2D getUV();

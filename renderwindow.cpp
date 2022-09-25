@@ -233,6 +233,8 @@ void RenderWindow::init()
     mMap.insert({"Ball", Ball});
 
 
+    BigArea = new HoydeKart(plainShader, 2.f);
+    BigArea->init();
 
     /* Skybox / CubeMap */
     cubemap = new CubeMap(cubeMapShader);
@@ -332,9 +334,11 @@ void RenderWindow::render()
     /* Draw mMap objects */
     for (const auto& it : mMap)
     {
-        it.second->draw();
+        it.second->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
     }
-    Bakken->draw();
+    Bakken->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
+    BigArea->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
+
 //    Bakken->drawLines();  // Linjene burde være hvite eller noe sånt så de kan faktisk ses sammen med meshen
 
         /* Draw other objects */

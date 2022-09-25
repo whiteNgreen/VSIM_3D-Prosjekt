@@ -22,7 +22,7 @@ public:
      * for hvert objekt, men det blir til senere. */
     virtual void init(/*GLuint matrixUniform*/);
     virtual void draw();
-    virtual void draw(QMatrix4x4& projectionMatrix, QMatrix4x4& viewMatrix){}
+    virtual void draw(QMatrix4x4& projectionMatrix, QMatrix4x4& viewMatrix);
     virtual void drawLines();
 
     Position2D getPosition2D();
