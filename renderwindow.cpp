@@ -232,8 +232,8 @@ void RenderWindow::init()
     Ball->SetStartVelocity(StartVelocity);
     mMap.insert({"Ball", Ball});
 
-
-    BigArea = new HoydeKart(plainShader, 2.f);
+    /* ----- Hoydekartet ------ */
+    BigArea = new HoydeKart(plainShader, 0.3f);
     BigArea->init();
 
     /* Skybox / CubeMap */
