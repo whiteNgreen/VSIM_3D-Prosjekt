@@ -5,16 +5,46 @@
 #include <chrono>
 
 
-HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int TriangleRes /*= 5*/, bool ReadComplex /*= false*/)
+int HoydeKart::BarySentricCoordinate(const QVector3D ObjectPosition, QVector3D &TheBarysentricCoordinates, QVector3D &SurfacePosition, QVector3D &SurfaceNormal)
+{
+
+    int index{};
+
+    for (auto it : mTriangles)
+    {
+        QVector3D Baryc{};
+        QVector3D SurfacePos{};
+        QVector3D SurfaceN{};
+        index = it.BarySentricCoordinate(ObjectPosition, Baryc, SurfacePos, SurfaceN);
+
+        if (index > 0)
+        {
+            LogError("FOUND TRIANGLE");
+            TheBarysentricCoordinates = Baryc;
+            SurfacePosition = SurfacePos;
+            SurfaceNormal = SurfaceN;
+            it.PrintTriangle();
+            return index;
+        }
+    }
+//    for (int i{}; i < mTriangles.size(); i++)
+//    {
+//        index = mTriangles[i].BarySentricCoordinate(ObjectPosition)
+//    }
+    return index;
+}
+
+HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int RuteResolution /*= 3*/, bool ReadComplex /*= false*/, int PointCloudResolution /*= 100*/)
 {
     setShader(shader);
 
+    /* ------- LESE PUNKTSKY FIL OG PUSHER INNI mPunktData ------- */
     std::string filnavn = "../VSIM_3D-Prosjekt/HoydeKart/SmallArea.txt";
     if (ReadComplex)
     {
         /* Leser hele punktskyen med en viss oppløsning
-         * Velger hvert hundrede punkt (PointResolution) */
-        ReadComplexPointCloud(filnavn, 100);
+         * Velger hvert hundrede punkt (PointCloudResolution) */
+        ReadComplexPointCloud(filnavn, PointCloudResolution);
         /* Skriver den nye simplifiserte punktskyen til en ny fil */
         WriteSimplePointCloud();
     }
@@ -38,6 +68,7 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int TriangleRes /*= 5
     Xmax -= Xmin;
     Ymax -= Ymin;
 
+    /* Skalerer størrelsen på Max verdiene */
     Xmax *= scale;
     Ymax *= scale;
 
@@ -47,16 +78,16 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int TriangleRes /*= 5
 
     /* Regulær Triangulering */
 //    unsigned int resolutionX{3};   // Bredde, brukt for å finne spesifike ruter via indekseringen
-    unsigned int resolutionX{TriangleRes};   // Bredde, brukt for å finne spesifike ruter via indekseringen
+    unsigned int resolutionX{RuteResolution};   // Bredde, brukt for å finne spesifike ruter via indekseringen
 //    unsigned int resolutionY{3};
-    unsigned int resolutionY{TriangleRes};
+    unsigned int resolutionY{RuteResolution};
 
     float StepLengthX = Xmax / resolutionX;
     float StepLengthY = Ymax / resolutionY;
 
     int index{};
 
-    /* Lager alle rutene vi skal ha basert på resolution/oppløsningen som er ønskelig */
+    /* ------ LAGER ALLE RUTENE VI SKAL HA BASERT PÅ OPPLØSNINGEN SOM ER ØNSKELIG -------- */
     for (unsigned int x{1}; x <= resolutionX; x++)
     {
         for (unsigned int y{1}; y <= resolutionY; y++)
@@ -85,7 +116,7 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int TriangleRes /*= 5
     /* --- Timer for rute laging --- */
     auto sjekkrute_start = std::chrono::system_clock::now();
 
-    /* Går igjennom alle punktene for å finne ut av hvilke rute de tilhører */
+    /* -------- GÅR IGJENNOM ALLE PUNKTENE FOR Å FINNE UT AV HVILKE RUTE DE TILHØRER ----- */
     for (unsigned int i{}; i < mPunktdata.size(); i++)
     {
         /* Sjekker hvilken rute punktet er innenfor */
@@ -112,7 +143,7 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int TriangleRes /*= 5
     /* --- Timer for utregning av rute hoyde --- */
     auto rutehoyde_start = std::chrono::system_clock::now();
 
-    /* Regner ut gjennomsnitts høyden til hver rute */
+    /* -------- REGNER UT GJENNOMSNITTS HØYDEN TIL HVER RUTE ---------- */
     for (unsigned int i{}; i < mRuter.size(); i++)
     {
         float z{};
@@ -140,6 +171,9 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int TriangleRes /*= 5
     {
         mVertices.push_back(Vertex{mRuter[i]->Center});
     }
+
+    /* ------- LAGER TRIANGLES, NORMALER, INDEKSER OG TRIANGLEOBJ'S ------ */
+    int tIndex{};
     for (unsigned int x{0}; x < resolutionX - 1; x++)
     {
         for (unsigned int y{0}; y < resolutionY - 1; y++)
@@ -150,6 +184,7 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int TriangleRes /*= 5
             unsigned int d = ((x+1) * resolutionY) + y + 1;
 
             /* Første triangel (b, a, c) */
+            tIndex++;
             mIndices.push_back(b);
             mIndices.push_back(a);
             mIndices.push_back(c);
@@ -159,8 +194,18 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int TriangleRes /*= 5
                         mVertices[b],
                         mVertices[c]
                         );
+            mTriangles.push_back(TriangleObj(
+                            tIndex,
+                            mVertices[a].getPosition(),
+                            mVertices[b].getPosition(),
+                            mVertices[c].getPosition(),
+                            mVertices[a].getNormal()
+                            ));
+
+
 
             /* Andre triangel (b, c, d) */
+            tIndex++;
             mIndices.push_back(b);
             mIndices.push_back(c);
             mIndices.push_back(d);
@@ -170,8 +215,18 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int TriangleRes /*= 5
                         mVertices[c],
                         mVertices[b]
                         );
+            mTriangles.push_back(TriangleObj(
+                            tIndex,
+                            mVertices[d].getPosition(),
+                            mVertices[c].getPosition(),
+                            mVertices[b].getPosition(),
+                            mVertices[d].getNormal()
+                            ));
         }
     }
+    Log("Triangle Count : " + std::to_string(tIndex));
+    mTriangles[0].PrintTriangle();
+//    LogVector("Triangle Baryc Position", mTriangles[0].GetCoordinateWithBaryc({0.5, 0.5, 0.5}));
 
     auto lagmesh_end = std::chrono::system_clock::now();
     auto lagmesh_time = std::chrono::duration<double>(lagmesh_end - lagmesh_start);
@@ -412,6 +467,7 @@ void HoydeKart::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)
 
     glBindVertexArray( mVAO );
     glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
+//    glDrawElements(GL_LINE_LOOP, mIndices.size(), GL_UNSIGNED_INT, nullptr);
 
     glDrawArrays(GL_POINTS, 0, mVertices.size());
     glPointSize(2.5f);
@@ -429,7 +485,7 @@ Rute::Rute(Shader* shader, int index, int X, int Y)
 
     Xindex = X;
     Yindex = Y;
-    TriangleIndex = index;
+    RuteIndex = index;
 }
 /* Rute rendering */
 void Rute::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)

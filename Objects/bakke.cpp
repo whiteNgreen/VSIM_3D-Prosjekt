@@ -92,6 +92,11 @@ int Bakke::BarySentricCoordinate(const QVector3D ObjectPosition, QVector3D& TheB
     return 0;
 }
 
+int Bakke::BarySentricCoordinate(const QVector3D ObjectPosition, QVector3D &TheBarysentricCoordinates, QVector3D &SurfacePosition, QVector3D &SurfaceNormal)
+{
+    return BarySentricCoordinate(ObjectPosition, TheBarysentricCoordinates, SurfacePosition, SurfaceNormal, 0);
+}
+
 QVector3D Bakke::GetCoordinateWithBaryc(const QVector3D &Baryc, const int index)
 {
     /* Antar at ingen av verdiene på Baryc er negative */

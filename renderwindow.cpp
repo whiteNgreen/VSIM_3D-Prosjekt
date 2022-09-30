@@ -220,21 +220,23 @@ void RenderWindow::init()
 
     Bakken->init();
 
+    /* ----- HOYDEKARTET ------ */
+    BigArea = new HoydeKart(plainShader, 0.05f, 3);
+    BigArea->init();
 
-    /* Ballen */
+
+    /* ------ BALLEN ------- */
     Ball = new OctahedronBall(3, 1.f);
     Ball->m_shader = plainShader;
     Ball->init();
 //    StartPosition = {a.x() + 1, a.y() - 1, a.z()};
-    StartPosition = { 0, 2, Ball->GetRadius() + 2 };
+    StartPosition = { 9.5, 9.5, Ball->GetRadius() + 18 };
     StartVelocity = { 0, 0, 0 };
-    Ball->PreSim_MoveTo(StartPosition, Bakken);
+//    Ball->PreSim_MoveTo(StartPosition, Bakken);
+    Ball->PreSim_MoveTo(StartPosition, BigArea);
     Ball->SetStartVelocity(StartVelocity);
     mMap.insert({"Ball", Ball});
 
-    /* ----- Hoydekartet ------ */
-    BigArea = new HoydeKart(plainShader, 0.05f, 50);
-    BigArea->init();
 
     /* Skybox / CubeMap */
     cubemap = new CubeMap(cubeMapShader);
@@ -314,7 +316,8 @@ void RenderWindow::render()
     {
         ElapsedTime += DeltaTime;
 
-        Ball->CalculatePhysics(Bakken, DeltaTime);
+//        Ball->CalculatePhysics(Bakken, DeltaTime);
+        Ball->CalculatePhysics(BigArea, DeltaTime);
 
         /* Viser ballens nåverende posisjon */
         if (mMainWindow)
@@ -334,6 +337,7 @@ void RenderWindow::render()
     }
     Bakken->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
     BigArea->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
+    BigArea->drawLines(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
 
 //    Bakken->drawLines();  // Linjene burde være hvite eller noe sånt så de kan faktisk ses sammen med meshen
 

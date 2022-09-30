@@ -73,9 +73,12 @@ void VisualObject::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)
     glBindVertexArray(0);
 }
 
-void VisualObject::drawLines()
+void VisualObject::drawLines(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)
 {
+    glUseProgram(m_shader->getProgram());
     m_shader->setUniformMatrix("mMatrix", mMatrix);
+    m_shader->setUniformMatrix("pMatrix", projectionMatrix);
+    m_shader->setUniformMatrix("vMatrix", viewMatrix);
 
     glBindVertexArray( mVAO );
     glDrawElements(GL_LINE_LOOP, mIndices.size(), GL_UNSIGNED_INT, nullptr);

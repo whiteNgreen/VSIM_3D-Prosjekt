@@ -25,12 +25,13 @@ public:
     virtual void init(/*GLuint matrixUniform*/);
     virtual void draw();
     virtual void draw(QMatrix4x4& projectionMatrix, QMatrix4x4& viewMatrix);
-    virtual void drawLines();
+    virtual void drawLines(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix);
 
     Position2D getPosition2D();
     QVector2D getPositionVector2D();
     QVector3D getPositionVector3D();
 
+    virtual void CalculateNormalofTriangle(){};
     virtual void CalculateNormalofTriangle(Vertex& v1, Vertex& v2, Vertex& v3);
 
     void setPositionRotation(QMatrix4x4 matrix);

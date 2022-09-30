@@ -3,6 +3,7 @@
 
 #include "visualobject.h"
 #include "Objects/bakke.h"
+#include "Objects/hoydekart.h"
 #include "StandAlone/LoggerFunctions.h"
 #include <unordered_map>
 
@@ -27,7 +28,7 @@ private:
     float mRadius; // Radiusen til ballen
     void lagTriangel(const QVector3D& v1, const QVector3D& v2, const QVector3D& v3);
     void subDivide(const QVector3D& a, const QVector3D& b, const QVector3D&c, int n);
-    void CalculateNormalofTriangle();
+    void CalculateNormalofTriangle() override;
 
 
 public:
@@ -49,7 +50,7 @@ public:
 /* Bakken ballen skal være på */
 private:
     Bakke* mBakken{nullptr};
-    unsigned int mTriangleIndex{0}; // Indeksen senteret er over
+    int mTriangleIndex{ -1 }; // Indeksen senteret er over
 
     std::unordered_map<unsigned int, SurfaceContactPoint> mSurfaceContactPoints;
 
@@ -80,6 +81,7 @@ public:
 
     /* Kalkulerer fysikken. Inneholder all logikken som trengs til det */
     void CalculatePhysics(Bakke* bakken, float DeltaTime);
+//    void CalculatePhysics(HoydeKart* bakken, float DeltaTime);
     void CalculateAcceleration(QVector3D SurfaceNormal, float FrictionForce, const int SurfaceIndex);
     void UpdateVelocity(float DeltaTime);
 
