@@ -109,8 +109,8 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
 
     /* Object Position Variables */
     QVector3D ObjectPosition{ Position };
-//    float radius{ mRadius };
-    float radius{ 0.f };
+    float radius{ mRadius };    // Som Ball, Kollisjon tar med radius
+//    float radius{ 0.f };  // Som partikkel, Kollisjonen er ved senter
     QVector3D TranslationAdjustment{};
 
     /* Surface Variables */

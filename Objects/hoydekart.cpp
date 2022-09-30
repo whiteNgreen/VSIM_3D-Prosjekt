@@ -5,125 +5,25 @@
 #include <chrono>
 
 
-HoydeKart::HoydeKart(Shader* shader, float scale)
+HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int TriangleRes /*= 5*/, bool ReadComplex /*= false*/)
 {
     setShader(shader);
 
-//    float Xmax{}, Ymax{}, Zmax{};
-//    float Xmin{}, Ymin{}, Zmin{};
-
-//    int Pointresolution{ 100 };
     std::string filnavn = "../VSIM_3D-Prosjekt/HoydeKart/SmallArea.txt";
-    /* Leser hele punktskyen med en viss oppløsning
-     * Velger hvert hundrede punkt (PointResolution) */
-//    ReadComplexPointCloud(filnavn, 100);
-    /* Skriver den nye simplifiserte punktskyen til en ny fil */
-//    WriteSimplePointCloud();
-
-    /* Leser hoydedata fra den simplifiserte punktskyen for å spare tid */
-    ReadSimplePointCloud();
-
-//    /* Leser hoydedata fila */
+    if (ReadComplex)
     {
-//    int count{};    // Sjekker antall linjer/punkter det er i hoydedata fila
-////    int Pointresolution{ 100 };
-
-//    /* Setter Timer */
-//    auto readfile_start = std::chrono::system_clock::now();
-
-//    std::string filnavn = "../VSIM_3D-Prosjekt/HoydeKart/SmallArea.txt";
-//    std::ifstream inn;
-//    inn.open(filnavn.c_str());
-//    if (inn.is_open())
-//    {
-//        float X{}, Y{}, Z{};
-//        int c{};
-//        int PointRead{};
-//        while (true)
-//        {
-////            if (PointRead%10 == 0)
-//            {
-//                /* Reading inn points from file */
-//                c++;
-//                if (c == 1)
-//                {
-//                    inn >> X;
-//                }
-//                else if (c == 2)
-//                {
-//                    inn >> Y;
-//                }
-//                else if (c == 3)
-//                {
-//                    inn >> Z;
-
-////                    X*=scale, Y*=scale, Z*=scale;
-
-//                    /* Initializing the first round */
-//                    if (count == 0)
-//                    {
-//                        Xmax = X; Xmin = X;
-//                        Ymax = Y; Ymin = Y;
-//                        Zmax = Z; Zmin = Z;
-//                    }
-
-//                    /* Checking if there is a new maximum or minimum value for each coordinate */
-//                    /* X */
-//                    if (X > Xmax){ Xmax = X; }
-//                    if (X < Xmin){ Xmin = X; }
-//                    /* Y */
-//                    if (Y > Ymax){ Ymax = Y; }
-//                    if (Y < Ymin){ Ymin = Y; }
-//                    /* Z */
-//                    if (Z > Zmax){ Zmax = Z; }
-//                    if (Z < Zmin){ Zmin = Z; }
-
-////                    if (PointRead % 10 == 0)
-//                    if (PointRead == Pointresolution)
-//                    {
-//                        mPunktdata.push_back(QVector3D{X, Y, Z});
-//                        PointRead = 0;
-//                    }
-//                    PointRead++;
-//                    /* Creating vertex */
-////                    mVertices.push_back(Vertex{ X, Y, Z });
-//                    count++;
-
-//                    c = 0;
-//                }
-//            }
-
-//            if (inn.eof()){ break; }
-//        }
-
-//        inn.close();
-//    }
-//    else
-//    {
-//        LogError("Could not open file");
-//    }
-
-//    auto readfile_end = std::chrono::system_clock::now();
-//    auto readfile_time = std::chrono::duration<double>(readfile_end - readfile_start);
-//    Log("Readfile Timer = " + std::to_string(readfile_time.count()) + "s");
-
-////    LogValue("Line count", count);
-//    Log("Points : " + std::to_string(mPunktdata.size()));
-////    return;
+        /* Leser hele punktskyen med en viss oppløsning
+         * Velger hvert hundrede punkt (PointResolution) */
+        ReadComplexPointCloud(filnavn, 100);
+        /* Skriver den nye simplifiserte punktskyen til en ny fil */
+        WriteSimplePointCloud();
+    }
+    else
+    {
+        /* Leser hoydedata fra den simplifiserte punktskyen for å spare tid */
+        ReadSimplePointCloud();
     }
 
-    /* Kun for testing for å kunne se hvordan meshen ish skal kunne se ut */
-//    for (unsigned int i{}; i < mPunktdata.size(); i++)
-//    {
-//        mVertices.push_back(Vertex{mPunktdata[i]});
-//    }
-    /* Setter vertices til nullpunktet i scenen */
-//    for (unsigned int i{}; i < mVertices.size(); i++)
-//    {
-//        mVertices[i].SubtractPosition(Xmin, Ymin, Zmin);
-//        mVertices[i].ScalePosition(scale);
-//        mIndices.push_back(i);  // Funker ikke, vil bare kunne tegne meshen nå for å sjekke om lesing av fila funka
-//    }
 
     /* Trekker fra minimums verdiene for xyz slik at terrenget blir tegnet i origo */
     for (unsigned int i{}; i < mPunktdata.size(); i++)
@@ -132,32 +32,24 @@ HoydeKart::HoydeKart(Shader* shader, float scale)
         mPunktdata[i] -= QVector3D{Xmin, Ymin, Zmin};
         /* Skalerer størrelsen på terrenget */
         mPunktdata[i] *= scale;
-
-//        mVertices.push_back(Vertex{mPunktdata[i]}); // For test visualisering
     }
-//    return;
 
     /* Line count and Max & Min values of the area */
     Xmax -= Xmin;
     Ymax -= Ymin;
-//    Zmax -= Zmin;
-
-//    Xmin *= scale;
-//    Ymin *= scale;
-//    Zmin *= scale;
 
     Xmax *= scale;
     Ymax *= scale;
 
 
-//    LogValue("Line count", count);
-
     /* --- Timer for rute laging --- */
     auto makerute_start = std::chrono::system_clock::now();
 
     /* Regulær Triangulering */
-    unsigned int resolutionX{3};   // Bredde, brukt for å finne spesifike ruter via indekseringen
-    unsigned int resolutionY{3};
+//    unsigned int resolutionX{3};   // Bredde, brukt for å finne spesifike ruter via indekseringen
+    unsigned int resolutionX{TriangleRes};   // Bredde, brukt for å finne spesifike ruter via indekseringen
+//    unsigned int resolutionY{3};
+    unsigned int resolutionY{TriangleRes};
 
     float StepLengthX = Xmax / resolutionX;
     float StepLengthY = Ymax / resolutionY;
@@ -286,25 +178,12 @@ HoydeKart::HoydeKart(Shader* shader, float scale)
     Log("Lagmesh Timer = " + std::to_string(lagmesh_time.count()) + "s");
 
     WriteMeshToFile();
-    return;
-
-
-//    unsigned int i = 0;
-//    mIndices = {
-////        1, 0, 4
-//        (i + 1), i, (i+1) * resolutionY,    // First Triangle
-////        1, 4, 5
-//        (i+1), (i+1) * resolutionY, (i+1) * resolutionY + 1 // Second Triangle
-//    };
-
-//    Log("Vertex count: " + std::to_string(mVertices.size()));
-    //    LogVector("Vertex 0", mVertices[0].getPosition());
+//    return;
 }
 
 void HoydeKart::ReadComplexPointCloud(std::string file, int PointResolution)
 {
     int count{};    // Sjekker antall linjer/punkter det er i hoydedata fila
-//    int Pointresolution{ 100 };
 
     /* Setter Timer */
     auto readfile_start = std::chrono::system_clock::now();
@@ -353,15 +232,12 @@ void HoydeKart::ReadComplexPointCloud(std::string file, int PointResolution)
                     if (Z > Zmax){ Zmax = Z; }
                     if (Z < Zmin){ Zmin = Z; }
 
-//                    if (PointRead % 10 == 0)
                     if (PointRead == PointResolution)
                     {
                         mPunktdata.push_back(QVector3D{X, Y, Z});
                         PointRead = 0;
                     }
                     PointRead++;
-                    /* Creating vertex */
-//                    mVertices.push_back(Vertex{ X, Y, Z });
                     count++;
 
                     c = 0;
@@ -456,15 +332,11 @@ void HoydeKart::ReadSimplePointCloud()
                     if (Z > Zmax){ Zmax = Z; }
                     if (Z < Zmin){ Zmin = Z; }
 
-//                    if (PointRead % 10 == 0)
-//                    if (PointRead == PointResolution)
                     {
                         mPunktdata.push_back(QVector3D{X, Y, Z});
                         PointRead = 0;
                     }
                     PointRead++;
-                    /* Creating vertex */
-//                    mVertices.push_back(Vertex{ X, Y, Z });
                     count++;
 
                     c = 0;

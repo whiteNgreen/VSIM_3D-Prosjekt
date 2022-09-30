@@ -74,7 +74,7 @@ private:
     std::vector<QVector3D> mPunktdata;
 
 public:
-    HoydeKart(Shader* shader, float scale);
+    HoydeKart(Shader* shader, float scale, unsigned int TriangleRes = 3, bool ReadComplex = false);
 
     /* Max & Min verdier for hoydedataen */
     float Xmax{}, Ymax{}, Zmax{};
