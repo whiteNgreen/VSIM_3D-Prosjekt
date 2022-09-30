@@ -68,6 +68,8 @@ FORMS += \
     mainwindow.ui
 
 DISTFILES += \
+    HoydeKart/HoydeKartMesh.txt \
+    HoydeKart/SimplifiedPointCloud.txt \
     Shaders/cubemapShader.frag \
     Shaders/cubemapShader.vert \
     Shaders/phongshader.frag \

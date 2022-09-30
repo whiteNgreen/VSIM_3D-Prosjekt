@@ -12,6 +12,8 @@
 
 typedef std::pair<float, float> Position2D;
 
+
+
 class VisualObject : public QOpenGLFunctions_4_1_Core
 {
 public:
@@ -28,6 +30,8 @@ public:
     Position2D getPosition2D();
     QVector2D getPositionVector2D();
     QVector3D getPositionVector3D();
+
+    virtual void CalculateNormalofTriangle(Vertex& v1, Vertex& v2, Vertex& v3);
 
     void setPositionRotation(QMatrix4x4 matrix);
 
@@ -76,5 +80,20 @@ protected:
 
     Logger* mLogger{nullptr};
 };
+
+//struct Line
+//{
+//    QVector3D P1, P2;
+//    QVector3D color{1,1,1};
+
+
+//};
+
+//struct TriangleSurface
+//{
+////    QVector3D P1, P2, P3;
+//    Vertex mVertices[3];
+//    QVector3D Normal;
+//};
 
 #endif // VISUALOBJECT_H

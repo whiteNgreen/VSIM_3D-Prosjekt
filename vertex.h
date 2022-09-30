@@ -8,7 +8,15 @@
 class Vertex
 {
     friend std::ostream& operator << (std::ostream&, const Vertex&);
-    friend std::ifstream& operator >> (std::istream&, Vertex&);
+    friend std::istream& operator >> (std::istream& is, Vertex& v);
+//    {
+//        // Trenger fire temporære variabler som kun skal lese inn paranteser og komma
+//        char dum, dum2, dum3, dum4;
+//        is >> dum >> v.m_xyz[0] >> dum2 >> v.m_xyz[1] >> dum3 >> v.m_xyz[2] >> dum4;
+//        is >> dum >> v.m_normal[0] >> dum2 >> v.m_normal[1] >> dum3 >> v.m_normal[2] >> dum4;
+//        is >> dum >> v.m_uv[0] >> dum2 >> v.m_uv[1] >> dum3;
+//        return is;
+//    }
 
 private:
     float m_xyz[3];

@@ -99,4 +99,17 @@ QVector3D VisualObject::getPositionVector3D()
     return mMatrix.column(3).toVector3D();
 }
 
+void VisualObject::CalculateNormalofTriangle(Vertex &v1, Vertex &v2, Vertex &v3)
+{
+    QVector3D ab = v2.getPosition() - v1.getPosition();
+    QVector3D ac = v3.getPosition() - v1.getPosition();
+//    QVector3D n = QVector3D::crossProduct(ab, ac);
+    QVector3D n = QVector3D::crossProduct(ac, ab);
+    n.normalize();
+
+    v1.setNormal(n);
+    v2.setNormal(n);
+    v3.setNormal(n);
+}
+
 

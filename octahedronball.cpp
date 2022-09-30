@@ -26,7 +26,7 @@ OctahedronBall::OctahedronBall(int recursions, float m_radius)
     subDivide(v5, v4, v3, m_rekursjoner);
     subDivide(v5, v1, v4, m_rekursjoner);
 
-    CalculateNormals();
+    CalculateNormalofTriangle();
 }
 
 void OctahedronBall::Reset(Bakke* bakken, const QVector3D& StartLocation, const QVector3D StartVelocity)
@@ -451,7 +451,7 @@ void OctahedronBall::subDivide(const QVector3D &a, const QVector3D &b, const QVe
     }
 }
 
-void OctahedronBall::CalculateNormals()
+void OctahedronBall::CalculateNormalofTriangle()
 {
     for (unsigned int it{0}; it < mVertices.size(); it+=3)
     {

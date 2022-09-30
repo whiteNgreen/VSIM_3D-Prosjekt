@@ -27,7 +27,7 @@ private:
     float mRadius; // Radiusen til ballen
     void lagTriangel(const QVector3D& v1, const QVector3D& v2, const QVector3D& v3);
     void subDivide(const QVector3D& a, const QVector3D& b, const QVector3D&c, int n);
-    void CalculateNormals();
+    void CalculateNormalofTriangle();
 
 
 public:

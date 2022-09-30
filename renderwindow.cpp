@@ -233,7 +233,7 @@ void RenderWindow::init()
     mMap.insert({"Ball", Ball});
 
     /* ----- Hoydekartet ------ */
-    BigArea = new HoydeKart(plainShader, 0.3f);
+    BigArea = new HoydeKart(plainShader, 0.05f);
     BigArea->init();
 
     /* Skybox / CubeMap */
@@ -312,10 +312,6 @@ void RenderWindow::render()
     /* Calculate Physics for mMap objects */
     if (bSimulate || bGoNextFrame)
     {
-//        static float movement{};
-//        movement += DeltaTime;
-//        Ball->mMatrix.translate(sinf(movement) / 10.f, 0, 0);
-
         ElapsedTime += DeltaTime;
 
         Ball->CalculatePhysics(Bakken, DeltaTime);
