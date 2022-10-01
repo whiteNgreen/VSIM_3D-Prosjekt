@@ -72,6 +72,8 @@ DISTFILES += \
     HoydeKart/SimplifiedPointCloud.txt \
     Shaders/cubemapShader.frag \
     Shaders/cubemapShader.vert \
+    Shaders/heightcurvesShader.frag \
+    Shaders/heightcurvesShader.vert \
     Shaders/phongshader.frag \
     Shaders/phongshader.vert \
     Shaders/plainshader.frag \

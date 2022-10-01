@@ -91,7 +91,12 @@ void RenderWindow::init()
     //general OpenGL stuff:
     glEnable(GL_DEPTH_TEST);            //enables depth sorting - must then use GL_DEPTH_BUFFER_BIT in glClear
         glEnable(GL_CULL_FACE);       //draws only front side of models - usually what you want - test it out!
-    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);    //gray color used in glClear GL_COLOR_BUFFER_BIT
+    glClearColor(0.37f, 0.42f, 0.45f, 1.0f);    //gray color used in glClear GL_COLOR_BUFFER_BIT
+
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+//    glBlendFunc(GL_BLEND_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //Compile shaders:
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
@@ -100,16 +105,16 @@ void RenderWindow::init()
 
     /* PLAIN SHADER */
     plainShader = new Shader("../VSIM_3D-Prosjekt/Shaders/plainshader.vert", "../VSIM_3D-Prosjekt/Shaders/plainshader.frag");
-    plainShader->setShaderType(ShaderType::plain);
+//    plainShader->setShaderType(ShaderType::plain);
 
     /* TEXTURE SHADER */
     textureShader = new Shader("../VSIM_3D-Prosjekt/Shaders/textureshader.vert", "../VSIM_3D-Prosjekt/Shaders/textureshader.frag");
-    textureShader->setShaderType(ShaderType::phong);
+//    textureShader->setShaderType(ShaderType::phong);
     textureShader->getUniformMatrix("textureSampler");
 
     /* PHONG SHADER */
     phongShader = new Shader("../VSIM_3D-Prosjekt/Shaders/phongshader.vert", "../VSIM_3D-Prosjekt/Shaders/phongshader.frag");
-    phongShader->setShaderType(ShaderType::phong);
+//    phongShader->setShaderType(ShaderType::phong);
     phongShader->getUniformMatrix("mMatrix");
     phongShader->getUniformMatrix("pMatrix");
     phongShader->getUniformMatrix("vMatrix");
@@ -124,10 +129,19 @@ void RenderWindow::init()
     phongShader->getUniformMatrix("cameraPosition");
     phongShader->getUniformMatrix("UsingTextures");
 
+    /* HEIGHT CURVES SHADER */
+    heightcurvesShader = new Shader("../VSIM_3D-Prosjekt/Shaders/heightcurvesShader.vert", "../VSIM_3D-Prosjekt/Shaders/heightcurvesShader.frag");
+    heightcurvesShader->getUniformMatrix("mMatrix");
+    heightcurvesShader->getUniformMatrix("pMatrix");
+    heightcurvesShader->getUniformMatrix("vMatrix");
+    heightcurvesShader->getUniformMatrix("heightStep");
+    heightcurvesShader->getUniformMatrix("maxHeight");
+    heightcurvesShader->getUniformMatrix("lineSize");
+
 
     /* CUBE MAP SHADER */
     cubeMapShader = new Shader("../VSIM_3D-Prosjekt/Shaders/cubemapShader.vert", "../VSIM_3D-Prosjekt/Shaders/cubemapShader.frag");
-    cubeMapShader->setShaderType(ShaderType::cubemap);
+//    cubeMapShader->setShaderType(ShaderType::cubemap);
     cubeMapShader->getUniformMatrix("view");
     cubeMapShader->getUniformMatrix("projection");
     cubeMapShader->getUniformMatrix("skybox");
@@ -172,7 +186,7 @@ void RenderWindow::init()
     light = new Light(new ObjMesh("Sphere.obj", plainShader), plainShader);
     light->init();
 //    light->mMatrix.translate(0, 0, 20);
-    light->MoveTo({5,5,40});
+    light->MoveTo({5,5,28});
     mMap.insert({"light", light});
 
 //    SimpleObject* FlatGround = new SimpleObject(Type::Plane, 10.f, plainShader);
@@ -673,7 +687,7 @@ void RenderWindow::MakeNedbor(int antallDroper, float RandomLengdeFraSenterXY, f
 
         std::shared_ptr<OctahedronBall> drope = std::make_shared<OctahedronBall>(1, 0.2f);
         drope->SetElasticity(0.1);
-        drope->m_shader = plainShader;
+        drope->m_shader = currentShader;
         drope->init();
         drope->PreSim_MoveTo(SpawnLocation);
 
@@ -703,19 +717,27 @@ void RenderWindow::UsingPhongShader(bool b)
 {
     if (b)
     {
-//        BigArea->setShader(phongShader);
         for (auto& it : mSceneObjects)
         {
+
             it->setShader(phongShader);
+
         }
+        currentShader = phongShader;
     }
     else
     {
-//        BigArea->setShader(plainShader);
         for (auto& it : mSceneObjects)
         {
             it->setShader(plainShader);
         }
+        currentShader = plainShader;
+    }
+
+    /* Change terrain back to the heightcurvesShader if it is supposed to show that */
+    if (bShowingHeightCurves)
+    {
+        BigArea->setShader(heightcurvesShader);
     }
 }
 
@@ -739,6 +761,31 @@ void RenderWindow::MoveLight(const QVector3D Move)
     }
 
     light->MoveTo(Pos);
+}
+
+void RenderWindow::ShowHeightCurves(bool b)
+{
+    if (b)
+    {
+        BigArea->setShader(heightcurvesShader);
+    }
+    else
+    {
+        BigArea->setShader(currentShader);
+    }
+    bShowingHeightCurves = b;
+}
+
+void RenderWindow::HeightCurve_ChangeStep(float Step)
+{
+    glUseProgram(heightcurvesShader->getProgram());
+    glUniform1f(heightcurvesShader->getUniformMatrix("heightStep"), Step);
+}
+
+void RenderWindow::HeightCurve_ChangeThickness(float value)
+{
+    glUseProgram(heightcurvesShader->getProgram());
+    glUniform1f(heightcurvesShader->getUniformMatrix("lineSize"), value);
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

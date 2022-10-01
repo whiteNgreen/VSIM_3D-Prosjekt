@@ -51,5 +51,12 @@ void main()
     else
     {
         fragColor = vec4(result, 1.0) * vec4(VertNormal, 1.0);
+
+        /* Testing av HoydeKurver med shader. Alpha culler ut deler av modellen som ikke har krevd hoyde */
+//        float height = 6.f;
+//        if (fragmentPosition.z > height + 0.1 || fragmentPosition.z < height - 0.1)
+//        {
+//            fragColor = vec4(1,1,1,0);
+//        }
     }
 }

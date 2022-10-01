@@ -296,3 +296,43 @@ void MainWindow::on_LightPositionX_valueChanged(double arg1)
     mRenderWindow->MoveLight({x,0,0});
 }
 
+
+void MainWindow::on_HeightCurveSlider_Step_valueChanged(int value)
+{
+    const int dpi = 10;
+    float v = value;
+    v /= dpi;
+    mRenderWindow->HeightCurve_ChangeStep(v);
+}
+
+
+void MainWindow::on_HeightCurveSlider_Thickness_valueChanged(int value)
+{
+    const int dpi = 100;
+    float v = value;
+    v /= dpi;
+    mRenderWindow->HeightCurve_ChangeThickness(v);
+}
+
+
+
+
+void MainWindow::on_HeightCurves_Button_toggled(bool checked)
+{
+    mRenderWindow->ShowHeightCurves(checked);
+
+    ui->HeightCurveSlider_Step->setEnabled(checked);
+    ui->HeightCurveSlider_Thickness->setEnabled(checked);
+    ui->HeightCurveText_Step->setEnabled(checked);
+    ui->HeightCurveText_Thickness->setEnabled(checked);
+
+    if (checked)
+    {
+        ui->HeightCurves_Button->setText("Disable\nHeight Curves");
+    }
+    else
+    {
+        ui->HeightCurves_Button->setText("Show\nHeight Curves");
+    }
+}
+

@@ -66,6 +66,12 @@ public:
     void UsingPhongShader(bool b);
     void MoveLight(const QVector3D Move);
 
+    void ShowHeightCurves(bool b);
+    bool bShowingHeightCurves{ false };
+
+    void HeightCurve_ChangeStep(float Step);
+    void HeightCurve_ChangeThickness(float value);
+
 private slots:
     void render();          //the actual render - function
 
@@ -88,7 +94,9 @@ private:
     Shader* textureShader{nullptr};
     Shader* phongShader{nullptr};
     Shader* cubeMapShader{nullptr};
+    Shader* heightcurvesShader{ nullptr };
 
+    Shader* currentShader{ nullptr };
     void PhongShaderUpdate();
 
 

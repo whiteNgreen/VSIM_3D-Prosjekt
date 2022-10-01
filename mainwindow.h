@@ -62,6 +62,12 @@ private slots:
 
     void on_LightPositionX_valueChanged(double arg1);
 
+    void on_HeightCurveSlider_Step_valueChanged(int value);
+
+    void on_HeightCurveSlider_Thickness_valueChanged(int value);
+
+    void on_HeightCurves_Button_toggled(bool checked);
+
 private:
     ///called from the constructor. Initializes different parts of the program.
     void init();
