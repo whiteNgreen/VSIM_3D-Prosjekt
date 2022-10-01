@@ -22,6 +22,9 @@ public:
 
     GLfloat mSpecularStrength{0.9f};
     GLint mSpecularExponent{4};
+
+    QVector3D Position;
+    void MoveTo(const QVector3D& Location);
 };
 
 #endif // LIGHT_H

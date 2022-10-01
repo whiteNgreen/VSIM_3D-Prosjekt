@@ -47,6 +47,8 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int RuteResolution /*
         ReadComplexPointCloud(filnavn, PointCloudResolution);
         /* Skriver den nye simplifiserte punktskyen til en ny fil */
         WriteSimplePointCloud();
+
+        ReadSimplePointCloud();
     }
     else
     {
@@ -67,10 +69,12 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int RuteResolution /*
     /* Line count and Max & Min values of the area */
     Xmax -= Xmin;
     Ymax -= Ymin;
+    Zmax -= Zmin;
 
     /* Skalerer størrelsen på Max verdiene */
     Xmax *= scale;
     Ymax *= scale;
+    Zmax *= scale;
 
 
     /* --- Timer for rute laging --- */
@@ -338,6 +342,7 @@ void HoydeKart::WriteSimplePointCloud()
 
 void HoydeKart::ReadSimplePointCloud()
 {
+    mPunktdata.clear();
     int count{};    // Sjekker antall linjer/punkter det er i hoydedata fila
 
     /* Setter Timer */
@@ -458,6 +463,15 @@ void HoydeKart::GetMeshFromFile()
     }
 }
 
+QVector3D HoydeKart::GetCenter()
+{
+    float x = (Xmax) / 2;
+    float y = (Ymax) / 2;
+    float z = (Zmax) / 2;
+
+    return {x,y,z};
+}
+
 void HoydeKart::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)
 {
     glUseProgram(m_shader->getProgram());
@@ -465,13 +479,13 @@ void HoydeKart::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)
     m_shader->setUniformMatrix("pMatrix", projectionMatrix);
     m_shader->setUniformMatrix("vMatrix", viewMatrix);
 
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+
     glBindVertexArray( mVAO );
     glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
-//    glDrawElements(GL_LINE_LOOP, mIndices.size(), GL_UNSIGNED_INT, nullptr);
-
-    glDrawArrays(GL_POINTS, 0, mVertices.size());
-    glPointSize(2.5f);
     glBindVertexArray(0);
+
 
     for (const auto& it : mRuter)
     {

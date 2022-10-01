@@ -36,11 +36,18 @@ public:
     ~OctahedronBall(){}
 
     void Reset(Bakke* bakken, const QVector3D& StartLocation, const QVector3D StartVelocity);
+    void Reset();
     void MoveTo(const QVector3D& Location);
 
     /* Pre Sim Flytting */
     /* Når objektet flyttes på utenfor simuleringen */
+    QVector3D mStartLocation{};
+//    QVector3D mStartVelocity{};
+
     void PreSim_MoveTo(const QVector3D& Location, Bakke* bakken);
+    void PreSim_MoveTo(const QVector3D& Location);
+
+
     /* Brukes når ballen blir dratt rundt utenfor simuleringen */
     void SetSurfaceIndex(Bakke* bakken);
 
@@ -76,8 +83,12 @@ private:
 
 public:
 
+    float GetElasticity() const { return Elasticity; }
+    void SetElasticity(float value){ Elasticity = value; }
+
     /* Setter start verdier */
     void SetStartVelocity(const QVector3D StartVelocity);
+//    void SetStartVelocity(const QVector3D StartVelocity);
 
     /* Kalkulerer fysikken. Inneholder all logikken som trengs til det */
     void CalculatePhysics(Bakke* bakken, float DeltaTime);

@@ -97,13 +97,17 @@ void RenderWindow::init()
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
     //Qt makes a build-folder besides the project folder. That is why we go down one directory
     // (out of the build-folder) and then up into the project folder.
+
+    /* PLAIN SHADER */
     plainShader = new Shader("../VSIM_3D-Prosjekt/Shaders/plainshader.vert", "../VSIM_3D-Prosjekt/Shaders/plainshader.frag");
     plainShader->setShaderType(ShaderType::plain);
 
+    /* TEXTURE SHADER */
     textureShader = new Shader("../VSIM_3D-Prosjekt/Shaders/textureshader.vert", "../VSIM_3D-Prosjekt/Shaders/textureshader.frag");
     textureShader->setShaderType(ShaderType::phong);
     textureShader->getUniformMatrix("textureSampler");
 
+    /* PHONG SHADER */
     phongShader = new Shader("../VSIM_3D-Prosjekt/Shaders/phongshader.vert", "../VSIM_3D-Prosjekt/Shaders/phongshader.frag");
     phongShader->setShaderType(ShaderType::phong);
     phongShader->getUniformMatrix("mMatrix");
@@ -118,8 +122,10 @@ void RenderWindow::init()
     phongShader->getUniformMatrix("specularExponent");
     phongShader->getUniformMatrix("objectColor");
     phongShader->getUniformMatrix("cameraPosition");
+    phongShader->getUniformMatrix("UsingTextures");
 
 
+    /* CUBE MAP SHADER */
     cubeMapShader = new Shader("../VSIM_3D-Prosjekt/Shaders/cubemapShader.vert", "../VSIM_3D-Prosjekt/Shaders/cubemapShader.frag");
     cubeMapShader->setShaderType(ShaderType::cubemap);
     cubeMapShader->getUniformMatrix("view");
@@ -127,10 +133,11 @@ void RenderWindow::init()
     cubeMapShader->getUniformMatrix("skybox");
 
 
+    /* CAMERA */
     mCamera = new Camera();
 
 
-    // Sets up texture map
+    /* TEXTURE MAPS */
     mTextureMap.insert({"DummyTexture", new Texture()});
     mTextureMap.insert({"RedTrophy", new Texture("RedTrophy.jpg")});
     mTextureMap.insert({"BlueTrophy", new Texture("BlueTrophy.jpg")});
@@ -150,20 +157,23 @@ void RenderWindow::init()
     Axis->init();
 
 
-    terrain = new Terrain(phongShader);
-    terrain->init();
-    auto tmp = new Texture("HeightmapTexture.png");
-    terrain->setTexture(tmp->getTexture("HeightmapTexture.png"));
-    terrain->setTexture(mTextureMap["TerrainTexture"]->textureID);
+    /* ---- Terrain ----- */
+//    terrain = new Terrain(phongShader);
+//    terrain->mPhongShader = phongShader;
+//    terrain->init();
+//    auto tmp = new Texture("HeightmapTexture.png");
+//    terrain->setTexture(tmp->getTexture("HeightmapTexture.png"));
+//    terrain->setTexture(mTextureMap["TerrainTexture"]->textureID);
 //    mMap.insert({"terrain", terrain});
 
 
     /* Importing a sphere.obj to the light.
      * Sets the initial translation to 20 in the z direction */
-//    light = new Light(new ObjMesh("Sphere.obj", plainShader), plainShader);
-//    light->init();
+    light = new Light(new ObjMesh("Sphere.obj", plainShader), plainShader);
+    light->init();
 //    light->mMatrix.translate(0, 0, 20);
-//    mMap.insert({"light", light});
+    light->MoveTo({5,5,40});
+    mMap.insert({"light", light});
 
 //    SimpleObject* FlatGround = new SimpleObject(Type::Plane, 10.f, plainShader);
 //    FlatGround->init();
@@ -217,12 +227,18 @@ void RenderWindow::init()
             Bakken->CreateTriangle(c, b, e);
     }
 
-
     Bakken->init();
+    mSceneObjects.push_back(Bakken);
 
     /* ----- HOYDEKARTET ------ */
-    BigArea = new HoydeKart(plainShader, 0.05f, 3);
+    BigArea = new HoydeKart(plainShader, 0.05f, 6);
+    BigArea->m_shader = phongShader;
+//    auto tmp = new Texture("HeightmapTexture.png");
+//    terrain->setTexture(tmp->getTexture("HeightmapTexture.png"));
+//    terrain->setTexture(mTextureMap["TerrainTexture"]->textureID);
+    BigArea->setTexture(mTextureMap["Monkey"]->textureID);
     BigArea->init();
+    mSceneObjects.push_back(BigArea);
 
 
     /* ------ BALLEN ------- */
@@ -236,11 +252,21 @@ void RenderWindow::init()
     Ball->PreSim_MoveTo(StartPosition, BigArea);
     Ball->SetStartVelocity(StartVelocity);
     mMap.insert({"Ball", Ball});
+    mSceneObjects.push_back(Ball);
+
+
+    /* ----- NEDBØR ----- */
+    MakeNedbor(5, 3.f, 20.f, true, 5.f);
 
 
     /* Skybox / CubeMap */
     cubemap = new CubeMap(cubeMapShader);
 
+
+//    for (auto& it : mSceneObjects)
+//    {
+//        it->setShader(phongShader);
+//    }
 
 
     /* VELOCITY TEST */
@@ -282,9 +308,31 @@ void RenderWindow::init()
         mMainWindow->OnStart();
         mMainWindow->SetBallStartPositionText(StartPosition);
         mMainWindow->SetBallStartVelocityText(StartVelocity);
+        mMainWindow->SetLightStartValues(light->getPositionVector3D());
+
+        /* Gir alle objektene riktig shader, phong eller plain.
+         *  Basert på verdien satt i CheckBoxen UsingPhong shader
+         *  i GUI'en */
+        UsingPhongShader(mMainWindow->GetUsingPhongShader());
     }
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
+}
+
+void RenderWindow::PhongShaderUpdate()
+{
+    glUseProgram(phongShader->getProgram());
+
+    /* - Setting Light Variables - */
+    glUniform3f(phongShader->getUniformMatrix("lightPosition"), light->mMatrix.column(3).x(), light->mMatrix.column(3).y(), light->mMatrix.column(3).z());
+    glUniform3f(phongShader->getUniformMatrix("cameraPosition"), mCamera->mPosition.x(), mCamera->mPosition.y(), mCamera->mPosition.z());
+    glUniform3f(phongShader->getUniformMatrix("lightColor"), light->mLightColor.x(), light->mLightColor.y(), light->mLightColor.z());
+    glUniform1f(phongShader->getUniformMatrix("specularStrength"), light->mSpecularStrength);
+
+    glUniform1f(phongShader->getUniformMatrix("lightStrength"), light->mLightStrength);
+
+    /* -- Using textures or Using Vertex Colors(normals) -- */
+    glUniform1i(phongShader->getUniformMatrix("UsingTextures"), false);
 }
 
 
@@ -319,6 +367,12 @@ void RenderWindow::render()
 //        Ball->CalculatePhysics(Bakken, DeltaTime);
         Ball->CalculatePhysics(BigArea, DeltaTime);
 
+        /* -- Fysikken til nedbøret -- */
+        for (auto& it : mNedbor)
+        {
+            it->CalculatePhysics(BigArea, DeltaTime);
+        }
+
         /* Viser ballens nåverende posisjon */
         if (mMainWindow)
         {
@@ -330,14 +384,29 @@ void RenderWindow::render()
     }
 
 
-    /* Draw mMap objects */
-    for (const auto& it : mMap)
+    /* -- RENDERING SCENE OBJECTS -- */
+    PhongShaderUpdate();
+    light->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
+//    for (const auto& it : mMap)
+//    {
+//        it.second->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
+//    }
+//    /* -- Render Regn -- */
+//    for (const auto& it : mNedbor)
+//    {
+//        it->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
+//    }
+//    Bakken->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
+
+//    BigArea->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
+
+    for (const auto& it : mSceneObjects)
     {
-        it.second->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
+        it->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
     }
-    Bakken->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
-    BigArea->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
-    BigArea->drawLines(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
+
+    /* --- RENDERING DEBUG OBJECTS --- */
+//    BigArea->drawLines(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
 
 //    Bakken->drawLines();  // Linjene burde være hvite eller noe sånt så de kan faktisk ses sammen med meshen
 
@@ -415,6 +484,11 @@ void RenderWindow::GoNextFrame()
 void RenderWindow::Reset()
 {
     Ball->Reset(Bakken, StartPosition, StartVelocity);
+
+    for (const auto& it : mNedbor)
+    {
+        it->Reset();
+    }
 
     ElapsedTime = 0.f;
     if (mMainWindow)
@@ -574,6 +648,98 @@ void RenderWindow::startOpenGLDebugger()
     }
 }
 
+void RenderWindow::MakeNedbor(int antallDroper, float RandomLengdeFraSenterXY, float HoydefraTerrain, bool RandomHeight /*=false*/, float RandomHeightDifference /*= 0*/)
+{
+//    mNedbor.clear();
+    SlettNedbor();
+
+    QVector3D Senter = BigArea->GetCenter();
+    Senter.setZ(Senter.z() + HoydefraTerrain);
+
+    for (int i{}; i < antallDroper; i++)
+    {
+        QVector3D SpawnLocation{};
+        float x = random_between_two_floats(Senter.x() - RandomLengdeFraSenterXY, Senter.x() + RandomLengdeFraSenterXY);
+        float y = random_between_two_floats(Senter.y() - RandomLengdeFraSenterXY, Senter.y() + RandomLengdeFraSenterXY);
+        if (RandomHeight)
+        {
+            float z = random_between_two_floats(Senter.z() - RandomHeightDifference, Senter.z() + RandomHeightDifference);
+            SpawnLocation = {x,y,z};
+        }
+        else
+        {
+            SpawnLocation = { x, y, Senter.z() };
+        }
+
+        std::shared_ptr<OctahedronBall> drope = std::make_shared<OctahedronBall>(1, 0.2f);
+        drope->SetElasticity(0.1);
+        drope->m_shader = plainShader;
+        drope->init();
+        drope->PreSim_MoveTo(SpawnLocation);
+
+        mNedbor.push_back(drope);
+        mSceneObjects.push_back(drope.get());
+    }
+}
+
+void RenderWindow::SlettNedbor()
+{
+    for (unsigned int i{}; i < mNedbor.size(); i++)
+    {
+        for (unsigned int k{}; k < mSceneObjects.size(); k++)
+        {
+            if (mNedbor[i].get() == mSceneObjects[k])
+            {
+                mSceneObjects.erase(mSceneObjects.begin()+k);
+                k--;
+            }
+        }
+    }
+
+    mNedbor.clear();
+}
+
+void RenderWindow::UsingPhongShader(bool b)
+{
+    if (b)
+    {
+//        BigArea->setShader(phongShader);
+        for (auto& it : mSceneObjects)
+        {
+            it->setShader(phongShader);
+        }
+    }
+    else
+    {
+//        BigArea->setShader(plainShader);
+        for (auto& it : mSceneObjects)
+        {
+            it->setShader(plainShader);
+        }
+    }
+}
+
+void RenderWindow::MoveLight(const QVector3D Move)
+{
+    QVector3D Pos = light->getPositionVector3D();
+
+    /* Hvilken akse beveger lyset seg i? */
+
+    if (Move.x() != 0)
+    {
+        Pos.setX(Move.x());
+    }
+    if (Move.y() != 0)
+    {
+        Pos.setY(Move.y());
+    }
+    if (Move.z() != 0)
+    {
+        Pos.setZ(Move.z());
+    }
+
+    light->MoveTo(Pos);
+}
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void RenderWindow::handleInput()

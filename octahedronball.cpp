@@ -43,6 +43,18 @@ void OctahedronBall::Reset(Bakke* bakken, const QVector3D& StartLocation, const 
     FrameCount = 0;
 }
 
+void OctahedronBall::Reset()
+{
+    PreSim_MoveTo(mStartLocation);
+
+    SetStartVelocity({0,0,0});
+    Acceleration_PreviousFrame *= 0.f;
+    Acceleration *= 0.f;
+
+    /* Reset Debug Variables */
+    FrameCount = 0;
+}
+
 void OctahedronBall::MoveTo(const QVector3D &Location)
 {
     Position_PreviousFrame = Position;
@@ -54,10 +66,15 @@ void OctahedronBall::MoveTo(const QVector3D &Location)
 
 void OctahedronBall::PreSim_MoveTo(const QVector3D &Location, Bakke *bakken)
 {
+    mStartLocation = Location;
     MoveTo(Location);
     SetSurfaceIndex(bakken);
+}
 
-//    LogValue("PreSim Surface", mTriangleIndex);
+void OctahedronBall::PreSim_MoveTo(const QVector3D &Location)
+{
+    mStartLocation = Location;
+    MoveTo(Location);
 }
 
 void OctahedronBall::SetSurfaceIndex(Bakke* bakken)
@@ -87,7 +104,7 @@ void OctahedronBall::SetSurfaceIndex(Bakke* bakken)
 
     /* Sjekk om ballen er oppå flata */
     float HeightDifferenceObjectSurface = GetDistanceToSurface( ObjectPosition, SurfacePosition, SurfaceNormal ) - radius;
-    mLogger->logText("HeightDifference: " + std::to_string(HeightDifferenceObjectSurface));
+//    mLogger->logText("HeightDifference: " + std::to_string(HeightDifferenceObjectSurface));
 
     /* Hvis ballen er under flata så korrigerer vi høyden i z-aksen til å matche surface */
     if (HeightDifferenceObjectSurface >= 0.001f)
@@ -97,10 +114,10 @@ void OctahedronBall::SetSurfaceIndex(Bakke* bakken)
 
     mTriangleIndex = tmpIndex;
 
-    Log(" ----- On Triangle : " + std::to_string(mTriangleIndex) + " -------- ");
-    LogVector("Presim : Baryc", Baryc);
-    LogVector("Presim : SurfacePosition", SurfacePosition);
-    LogVector("Presim : SurfaceNormal", SurfaceNormal);
+//    Log(" ----- On Triangle : " + std::to_string(mTriangleIndex) + " -------- ");
+//    LogVector("Presim : Baryc", Baryc);
+//    LogVector("Presim : SurfacePosition", SurfacePosition);
+//    LogVector("Presim : SurfaceNormal", SurfaceNormal);
 }
 
 void OctahedronBall::SetStartVelocity(const QVector3D StartVelocity)
@@ -528,15 +545,16 @@ void OctahedronBall::init()
 
 void OctahedronBall::draw()
 {
-    m_shader->setUniformMatrix("mMatrix", mMatrix);
     glUseProgram(m_shader->getProgram());
+    m_shader->setUniformMatrix("mMatrix", mMatrix);
+
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_texture);
+
     glBindVertexArray( mVAO );
     glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
-
-        glBindVertexArray(0);
+    glBindVertexArray(0);
 }
 
 void OctahedronBall::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)
@@ -546,12 +564,11 @@ void OctahedronBall::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)
     m_shader->setUniformMatrix("pMatrix", projectionMatrix);
     m_shader->setUniformMatrix("vMatrix", viewMatrix);
 
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
 
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, m_texture);
     glBindVertexArray( mVAO );
     glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
-
     glBindVertexArray(0);
 }
 

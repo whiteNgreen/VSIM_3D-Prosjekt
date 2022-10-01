@@ -4,6 +4,7 @@ out vec4 fragColor;     //The final color
 in vec3 normalTransposed;
 in vec3 fragmentPosition;
 in vec2 UV;
+in vec3 VertNormal;
 
 uniform sampler2D textureSampler;
 
@@ -19,7 +20,10 @@ uniform vec3 objectColor = vec3(1.0, 1.0, 1.0);
 
 uniform vec3 cameraPosition;
 
-void main(){
+uniform int UsingTextures;
+
+void main()
+{
     vec3 ambient = ambientStrength * lightColor;
 
     // Diffuse
@@ -40,5 +44,12 @@ void main(){
 
     vec3 result = ambient + diffuse + specular;
 
-    fragColor = vec4(result, 1.0) * texture(textureSampler, UV);
+    if (UsingTextures == 1)
+    {
+        fragColor = vec4(result, 1.0) * texture(textureSampler, UV);
+    }
+    else
+    {
+        fragColor = vec4(result, 1.0) * vec4(VertNormal, 1.0);
+    }
 }

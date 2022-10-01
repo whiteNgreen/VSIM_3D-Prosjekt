@@ -8,7 +8,8 @@ uniform mat4 mMatrix;                        //the matrix for the model
 uniform mat4 vMatrix;
 uniform mat4 pMatrix;
 
-void main() {
+void main()
+{
    color = colorIn;                         //passing on the vertex color
    gl_Position = pMatrix * vMatrix * mMatrix * positionIn;       //calculate the position of the model
 }

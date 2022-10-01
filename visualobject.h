@@ -8,10 +8,10 @@
 #include "vertex.h"
 #include "Shaders/shader.h"
 #include "logger.h"
+//#include "renderwindow.h"
 
 
 typedef std::pair<float, float> Position2D;
-
 
 
 class VisualObject : public QOpenGLFunctions_4_1_Core
@@ -38,6 +38,8 @@ public:
 
     void setShader(Shader* shader){ m_shader = shader; }
     Shader* m_shader{nullptr};  // Tar denne ut av private for øyeblikket
+//    Shader* mPhongShader{ nullptr };
+//    Shader* mPlainShader{ nullptr };
 
     void setTexture(GLint texture){ m_texture = texture; }
     uint32_t getTexture(){ return m_texture; }

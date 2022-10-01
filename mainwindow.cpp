@@ -109,8 +109,19 @@ void MainWindow::SetBallCurrentPositionText(const QVector3D Position)
 void MainWindow::SetElapsedTime(const float Time)
 {
     ui->ElapsedTime->setText(QString::fromStdString(std::to_string(Time)) + "s");
-//    ui->ElapsedTime->append("s");
     ui->ElapsedTime->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::SetLightStartValues(const QVector3D lightPosition)
+{
+    ui->LightPositionX->setValue(lightPosition.x());
+    ui->LightPositionY->setValue(lightPosition.y());
+    ui->LightPositionZ->setValue(lightPosition.z());
+}
+
+bool MainWindow::GetUsingPhongShader()
+{
+    return ui->UsingPhongShader->checkState();
 }
 
 
@@ -161,12 +172,7 @@ void MainWindow::on_PauseButton_clicked(bool checked)
         ui->NextFrameButton->setText("Next\nFrame");
         t_Paused = "Pause";
     }
-//    /* Justere på teksten i gamemode boksen */
-//    {
-//        ui->TextMode->setFontWeight(1000);
-//        ui->TextMode->setText(t_GameMode);
-//        ui->TextMode->setAlignment(Qt::AlignCenter);
-//    }
+
     /* Pauser spillet i Rendervinduet */
     mRenderWindow->togglePause(checked);
 }
@@ -231,5 +237,62 @@ void MainWindow::on_BallStartVelocitySetY_valueChanged(double arg1)
 void MainWindow::on_BallStartVelocitySetZ_valueChanged(double arg1)
 {
     mRenderWindow->ChangeBallStartVelocityZ(arg1);
+}
+
+
+void MainWindow::on_LagNedbor_pressed()
+{
+    int antall = ui->DroperAntall->value();
+    float lengde = ui->DroperTilfeldigLengdeXY->value();
+    float hoyde = ui->DroperHoydefraTerrain->value();
+
+    if (ui->DropercheckBoxTilfeldigHoyde->checkState())
+    {
+        float tilfeldigHoyde = ui->DroperTilfeldigHoyde->value();
+        mRenderWindow->MakeNedbor(antall, lengde, hoyde, true, tilfeldigHoyde);
+        return;
+    }
+    mRenderWindow->MakeNedbor(antall, lengde, hoyde);
+}
+
+
+void MainWindow::on_LagNedbor_2_pressed()
+{
+    mRenderWindow->SlettNedbor();
+}
+
+
+void MainWindow::on_DropercheckBoxTilfeldigHoyde_toggled(bool checked)
+{
+    ui->TilfeldigHoydeTekst->setEnabled(checked);
+    ui->DroperTilfeldigHoyde->setEnabled(checked);
+}
+
+
+void MainWindow::on_UsingPhongShader_toggled(bool checked)
+{
+    mRenderWindow->UsingPhongShader(checked);
+
+}
+
+
+void MainWindow::on_LightPositionZ_valueChanged(double arg1)
+{
+    float z = arg1;
+    mRenderWindow->MoveLight({0,0,z});
+}
+
+
+void MainWindow::on_LightPositionY_valueChanged(double arg1)
+{
+    float y = arg1;
+    mRenderWindow->MoveLight({0,y,0});
+}
+
+
+void MainWindow::on_LightPositionX_valueChanged(double arg1)
+{
+    float x = arg1;
+    mRenderWindow->MoveLight({x,0,0});
 }
 

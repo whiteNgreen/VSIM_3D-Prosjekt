@@ -48,6 +48,20 @@ private slots:
 
     void on_BallStartVelocitySetZ_valueChanged(double arg1);
 
+    void on_LagNedbor_pressed();
+
+    void on_LagNedbor_2_pressed();
+
+    void on_DropercheckBoxTilfeldigHoyde_toggled(bool checked);
+
+    void on_UsingPhongShader_toggled(bool checked);
+
+    void on_LightPositionZ_valueChanged(double arg1);
+
+    void on_LightPositionY_valueChanged(double arg1);
+
+    void on_LightPositionX_valueChanged(double arg1);
+
 private:
     ///called from the constructor. Initializes different parts of the program.
     void init();
@@ -69,6 +83,9 @@ public:
     void SetBallStartVelocityText(const QVector3D startVel);
     void SetBallCurrentPositionText(const QVector3D Position);
     void SetElapsedTime(const float Time);
+    void SetLightStartValues(const QVector3D lightPosition);
+
+    bool GetUsingPhongShader();
 };
 
 #endif // MAINWINDOW_H

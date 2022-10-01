@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1627</width>
+    <width>1743</width>
     <height>1002</height>
    </rect>
   </property>
@@ -98,8 +98,8 @@ Frame</string>
     </property>
     <property name="geometry">
      <rect>
-      <x>1250</x>
-      <y>630</y>
+      <x>1240</x>
+      <y>360</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -151,8 +151,8 @@ Frame</string>
    <widget class="QDoubleSpinBox" name="BallStartPositionSetY">
     <property name="geometry">
      <rect>
-      <x>1310</x>
-      <y>630</y>
+      <x>1300</x>
+      <y>360</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -204,8 +204,8 @@ Frame</string>
    <widget class="QDoubleSpinBox" name="BallStartPositionSetZ">
     <property name="geometry">
      <rect>
-      <x>1370</x>
-      <y>630</y>
+      <x>1360</x>
+      <y>360</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -257,8 +257,8 @@ Frame</string>
    <widget class="QTextEdit" name="BallStartPosition">
     <property name="geometry">
      <rect>
-      <x>1270</x>
-      <y>600</y>
+      <x>1260</x>
+      <y>330</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -292,8 +292,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QDoubleSpinBox" name="BallStartVelocitySetY">
     <property name="geometry">
      <rect>
-      <x>1310</x>
-      <y>700</y>
+      <x>1300</x>
+      <y>430</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -345,8 +345,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QTextEdit" name="BallStartHastighet">
     <property name="geometry">
      <rect>
-      <x>1270</x>
-      <y>670</y>
+      <x>1260</x>
+      <y>400</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -365,8 +365,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QDoubleSpinBox" name="BallStartVelocitySetX">
     <property name="geometry">
      <rect>
-      <x>1250</x>
-      <y>700</y>
+      <x>1240</x>
+      <y>430</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -418,8 +418,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QDoubleSpinBox" name="BallStartVelocitySetZ">
     <property name="geometry">
      <rect>
-      <x>1370</x>
-      <y>700</y>
+      <x>1360</x>
+      <y>430</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -869,13 +869,445 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;0s&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="LagNedbor">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1500</x>
+      <y>10</y>
+      <width>161</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS Gothic</family>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Lag Nedbør</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="DroperAntall">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1640</x>
+      <y>80</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1510</x>
+      <y>80</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS PGothic</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Antall Regn Dråper</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="DroperTilfeldigLengdeXY">
+    <property name="geometry">
+     <rect>
+      <x>1640</x>
+      <y>130</y>
+      <width>62</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_2">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1510</x>
+      <y>130</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS PGothic</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Tilfeldig XY lengde</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="DropercheckBoxTilfeldigHoyde">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1510</x>
+      <y>220</y>
+      <width>161</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS PGothic</family>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Tilfeldig høyde</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="DroperTilfeldigHoyde">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1640</x>
+      <y>260</y>
+      <width>62</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="TilfeldigHoydeTekst">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1510</x>
+      <y>260</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS PGothic</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Tilfeldig Høyde</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="LagNedbor_2">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1660</x>
+      <y>10</y>
+      <width>81</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS Gothic</family>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Slett
+Nedbør</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_4">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1510</x>
+      <y>180</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS PGothic</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Høyde fra terrian</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="DroperHoydefraTerrain">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1640</x>
+      <y>180</y>
+      <width>62</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="UsingPhongShader">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1250</x>
+      <y>620</y>
+      <width>161</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS PGothic</family>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Using Phong Shader</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="LightPositionY">
+    <property name="geometry">
+     <rect>
+      <x>1300</x>
+      <y>690</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="palette">
+     <palette>
+      <active>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>128</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </active>
+      <inactive>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>128</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </inactive>
+      <disabled>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>240</red>
+          <green>240</green>
+          <blue>240</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </disabled>
+     </palette>
+    </property>
+    <property name="minimum">
+     <double>-1000.000000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>1000.000000000000000</double>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="LightPositionX">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1240</x>
+      <y>690</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="palette">
+     <palette>
+      <active>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>128</green>
+          <blue>128</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </active>
+      <inactive>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>128</green>
+          <blue>128</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </inactive>
+      <disabled>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>240</red>
+          <green>240</green>
+          <blue>240</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </disabled>
+     </palette>
+    </property>
+    <property name="minimum">
+     <double>-1000.000000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>1000.000000000000000</double>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="LightPositionZ">
+    <property name="geometry">
+     <rect>
+      <x>1360</x>
+      <y>690</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="palette">
+     <palette>
+      <active>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>170</red>
+          <green>128</green>
+          <blue>255</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </active>
+      <inactive>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>170</red>
+          <green>128</green>
+          <blue>255</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </inactive>
+      <disabled>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>240</red>
+          <green>240</green>
+          <blue>240</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </disabled>
+     </palette>
+    </property>
+    <property name="minimum">
+     <double>-1000.000000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>1000.000000000000000</double>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="LightPositionText">
+    <property name="geometry">
+     <rect>
+      <x>1250</x>
+      <y>660</y>
+      <width>161</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS PGothic</family>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="mouseTracking">
+     <bool>false</bool>
+    </property>
+    <property name="autoFormatting">
+     <set>QTextEdit::AutoNone</set>
+    </property>
+    <property name="undoRedoEnabled">
+     <bool>false</bool>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+    <property name="html">
+     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS PGothic'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:11pt;&quot;&gt;Light Position&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="textInteractionFlags">
+     <set>Qt::TextSelectableByMouse</set>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1627</width>
+     <width>1743</width>
      <height>20</height>
     </rect>
    </property>

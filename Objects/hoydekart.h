@@ -207,6 +207,8 @@ public: /* ----- Lage Terrain Mesh ----- */
     void WriteMeshToFile();
     void GetMeshFromFile();
 
+    QVector3D GetCenter();
+
     std::vector<Rute*> mRuter;
 
 //    void CalculateNormal()

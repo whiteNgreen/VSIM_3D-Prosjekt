@@ -43,6 +43,7 @@ public:
 
     bool mRotate{true};     //Check if triangle should rotate
 
+    /* ---- Funksjoner for GUI ---- */
     void togglePlay(bool bPlay);
     void togglePause(bool bPause);
     void GoNextFrame();
@@ -58,6 +59,12 @@ public:
     void ChangeBallStartVelocityY(const float y);
     void ChangeBallStartVelocityZ(const float z);
 
+
+    void MakeNedbor(int antallDroper, float MaxLengdefraSenter, float HoydefraTerrain, bool RandomHeight = false, float RandomHeightDifference = 0);
+    void SlettNedbor();
+
+    void UsingPhongShader(bool b);
+    void MoveLight(const QVector3D Move);
 
 private slots:
     void render();          //the actual render - function
@@ -82,6 +89,8 @@ private:
     Shader* phongShader{nullptr};
     Shader* cubeMapShader{nullptr};
 
+    void PhongShaderUpdate();
+
 
     QTimer *mRenderTimer{nullptr};           //timer that drives the gameloop
     QElapsedTimer mTimeStart;               //time variable that reads the calculated FPS
@@ -102,21 +111,25 @@ private:
 private:    // Objekter i scenen
 
     std::unordered_map<std::string, VisualObject*> mMap;
+    std::vector<VisualObject*> mSceneObjects;
 
     Quadtree* quadtree{nullptr};
 
     SimpleObject* Axis{nullptr};
 
-/* Visualisering og Simulering */
+/* ------ VISUALISERING OG SIMULERING ------- */
     float ElapsedTime{};
     /* Liten test overflate */
     Bakke* Bakken{nullptr};
-
 
     /* En Rullende Ball */
     QVector3D StartPosition{};
     QVector3D StartVelocity{};
     OctahedronBall* Ball{nullptr};
+
+    /* --- NEDBØR --- */
+//    std::vector<OctahedronBall*> mNedbor;
+    std::vector<std::shared_ptr<OctahedronBall>> mNedbor;
 
     /* Hoydekart */
     HoydeKart* BigArea{nullptr};
@@ -174,5 +187,10 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
     //    void wheelEvent(QWheelEvent *event) override{}
 };
+
+inline float random_between_two_floats(float min, float max)
+{
+    return (min + 1) + (((float) rand()) / (float) RAND_MAX) * (max - (min + 1));
+}
 
 #endif // RENDERWINDOW_H

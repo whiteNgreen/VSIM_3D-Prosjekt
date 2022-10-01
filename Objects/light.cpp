@@ -83,7 +83,6 @@ void Light::init()
 
 void Light::draw(QMatrix4x4& projectionMatrix, QMatrix4x4& viewMatrix)
 {
-//    glUniformMatrix4fv(m_shader->mMmatrixUniform, 1, GL_FALSE, mMatrix.constData());
     glUseProgram(m_shader->getProgram());
     m_shader->setUniformMatrix("mMatrix", mMatrix);
     m_shader->setUniformMatrix("pMatrix", projectionMatrix);
@@ -92,4 +91,11 @@ void Light::draw(QMatrix4x4& projectionMatrix, QMatrix4x4& viewMatrix)
     glBindVertexArray( mVAO );
     glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
+}
+
+void Light::MoveTo(const QVector3D &Location)
+{
+    QVector3D Move = Location - mMatrix.column(3).toVector3D();
+    mMatrix.translate(Move);
+    Position = mMatrix.column(3).toVector3D();
 }
