@@ -27,6 +27,14 @@ OctahedronBall::OctahedronBall(int recursions, float m_radius)
     subDivide(v5, v1, v4, m_rekursjoner);
 
     CalculateNormalofTriangle();
+
+    /* BSpline objektet */
+    LocationSpline = std::make_unique<BSpline>();
+}
+
+OctahedronBall::~OctahedronBall()
+{
+    LocationSpline = nullptr;
 }
 
 void OctahedronBall::Reset(Bakke* bakken, const QVector3D& StartLocation, const QVector3D StartVelocity)
@@ -41,6 +49,11 @@ void OctahedronBall::Reset(Bakke* bakken, const QVector3D& StartLocation, const 
 
     /* Reset Debug Variables */
     FrameCount = 0;
+
+    /* Delete B-Spline */
+    LocationSpline->DeleteCurve();
+    bFirstGroundHit = false;
+    SplineTimer = 0.f;
 }
 
 void OctahedronBall::Reset()
@@ -53,6 +66,11 @@ void OctahedronBall::Reset()
 
     /* Reset Debug Variables */
     FrameCount = 0;
+
+    /* Delete B-Spline */
+    LocationSpline->DeleteCurve();
+    bFirstGroundHit = false;
+    SplineTimer = 0.f;
 }
 
 void OctahedronBall::MoveTo(const QVector3D &Location)
@@ -245,6 +263,7 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
         {
             mLogger->logText("LANDED ON TRIANGLE: " + std::to_string(tmpIndex) + ", FROM FREEFALL");
 
+
             /* Må finne hvor mye som skal tas fra hastigheten
              * Hvis ballen lander på bakken mellom frames så duger ikke dette
              * må se forrige posisjon og hastigheten og bestemme hvor lang tid det ville tatt for å røre bakken
@@ -284,6 +303,14 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
 
             UpdateVelocity(DeltaTime);
             ObjectPosition += Velocity * DeltaTime;
+
+
+            /* Første gangen ballen lander på bakken */
+            if (!bFirstGroundHit)
+            {
+                MakeSplinePoint(ObjectPosition);
+                bFirstGroundHit = true;
+            }
         }
 
         /* Treffer kula en ny trekant? */
@@ -570,6 +597,37 @@ void OctahedronBall::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)
     glBindVertexArray( mVAO );
     glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
+
+    /* Draw B-Spline */
+    if (bFirstGroundHit && bShowSplineCurve)
+    {
+        LocationSpline->draw(projectionMatrix, viewMatrix);
+    }
+}
+
+void OctahedronBall::ShowSplinePoints(bool b)
+{
+    LocationSpline->ShowPoints(b);
+}
+
+void OctahedronBall::Update(float DeltaTime)
+{
+    if (bFirstGroundHit)
+    {
+        SplineTimer += DeltaTime;
+
+        if (SplineTimer > SplinePointTimeInterval)
+        {
+            MakeSplinePoint(Position);
+            SplineTimer = 0.f;
+        }
+    }
+
+}
+
+void OctahedronBall::MakeSplinePoint(const QVector3D &Location)
+{
+    LocationSpline->NewPoint(Location);
 }
 
 

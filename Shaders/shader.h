@@ -67,6 +67,10 @@ private:
     std::unordered_map<std::string, GLint> mUniforms;
 
     ShaderType type;
+
+public:
+    static Shader* getPlainShader();
 };
+
 
 #endif

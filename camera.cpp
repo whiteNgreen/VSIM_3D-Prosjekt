@@ -1,6 +1,6 @@
 #include "camera.h"
 
-Camera::Camera() : mPosition(50, 30, 25), mLookAt(2,0,0)
+Camera::Camera() : mPosition(-2, -4, 25), mLookAt(-2,-2,0)
 {
     mViewMatrix.setToIdentity();
     mProjectionMatrix.setToIdentity();

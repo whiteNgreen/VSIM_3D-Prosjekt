@@ -39,7 +39,8 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int RuteResolution /*
     setShader(shader);
 
     /* ------- LESE PUNKTSKY FIL OG PUSHER INNI mPunktData ------- */
-    std::string filnavn = "../VSIM_3D-Prosjekt/HoydeKart/SmallArea.txt";
+//    std::string filnavn = "../VSIM_3D-Prosjekt/HoydeKart/SmallArea.txt";
+    std::string filnavn = "../VSIM_3D-Prosjekt/HoydeKart/Svabudalen.txt";
     if (ReadComplex)
     {
         /* Leser hele punktskyen med en viss oppløsning

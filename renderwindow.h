@@ -21,6 +21,7 @@
 #include "octahedronball.h"
 #include "Objects/bakke.h"
 #include "Objects/hoydekart.h"
+#include "Objects/b_spline.h"
 
 class QOpenGLContext;
 class Shader;
@@ -62,6 +63,8 @@ public:
 
     void MakeNedbor(int antallDroper, float MaxLengdefraSenter, float HoydefraTerrain, bool RandomHeight = false, float RandomHeightDifference = 0);
     void SlettNedbor();
+    void ShowSplineCurves(bool b);
+    void ShowSplinePoints(bool b);
 
     void UsingPhongShader(bool b);
     void MoveLight(const QVector3D Move);
@@ -139,6 +142,8 @@ private:    // Objekter i scenen
 //    std::vector<OctahedronBall*> mNedbor;
     std::vector<std::shared_ptr<OctahedronBall>> mNedbor;
 
+    BSpline* splineTest{ nullptr };
+
     /* Hoydekart */
     HoydeKart* BigArea{nullptr};
 
@@ -168,6 +173,7 @@ private:    // Kamera og keyboard
 
 
     void handleInput();         // Camera and player movement
+    void handleSingleInput(int key);
     Camera* mCamera{nullptr};
     float mAspectratio{1.f};
 

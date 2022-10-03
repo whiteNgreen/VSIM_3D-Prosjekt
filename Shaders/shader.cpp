@@ -141,6 +141,12 @@ GLint Shader::getUniformMatrix(const std::string& uniform)
     return location;
 }
 
+Shader *Shader::getPlainShader()
+{
+    static Shader* pShader = new Shader("../VSIM_3D-Prosjekt/Shaders/plainshader.vert", "../VSIM_3D-Prosjekt/Shaders/plainshader.frag");
+    return pShader;
+}
+
 //void Shader::setupPlainShader()
 //{
 //    mMmatrixUniform =   glGetUniformLocation( getProgram(), "mMatrix" );

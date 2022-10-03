@@ -5,7 +5,6 @@ in vec3 fragmentPosition;
 
 uniform vec3 curveColor = vec3(1,1,1);
 
-
 uniform float heightStep = 1.f;
 uniform float maxHeight = 50.f;
 uniform float lineSize = 0.01f;

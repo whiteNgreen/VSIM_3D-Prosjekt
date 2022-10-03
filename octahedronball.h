@@ -6,7 +6,11 @@
 #include "Objects/hoydekart.h"
 #include "StandAlone/LoggerFunctions.h"
 #include <unordered_map>
+#include "Objects/b_spline.h"
+//#include "renderwindow.h"
 
+
+/* Vil prøve å sette opp kontaktpunkter for ballen */
 struct SurfaceContactPoint
 {
     unsigned int Index{};
@@ -20,7 +24,7 @@ class OctahedronBall : public VisualObject
 {
 /* Konstruksjonen av objektet og ballen */
 private:
-    /*class */Logger* mLogger{nullptr};
+    /*class */Logger* mLogger{ nullptr };
     int FrameCount{};
 
     int m_rekursjoner;
@@ -33,7 +37,7 @@ private:
 
 public:
     OctahedronBall(int recursions, float radius);
-    ~OctahedronBall(){}
+    ~OctahedronBall();
 
     void Reset(Bakke* bakken, const QVector3D& StartLocation, const QVector3D StartVelocity);
     void Reset();
@@ -107,6 +111,24 @@ public:
     void init() override;
     void draw() override;
     void draw(QMatrix4x4& projectionMatrix, QMatrix4x4& viewMatrix) override;
+
+/* -- B-SPLINE LOKASJONS KURVE -- */
+public:
+
+    bool bShowSplineCurve{ true };
+    bool bShowSplinePoints{ true };
+    void ShowSplinePoints(bool b);
+
+    bool bFirstGroundHit{ false };
+
+    void Update(float DeltaTime);
+
+    std::unique_ptr<BSpline> LocationSpline;
+
+    float SplineTimer{};
+    float SplinePointTimeInterval{ 1.f };
+
+    void MakeSplinePoint(const QVector3D& Location);
 
 /* Debug */
 public:

@@ -186,13 +186,8 @@ void RenderWindow::init()
     light = new Light(new ObjMesh("Sphere.obj", plainShader), plainShader);
     light->init();
 //    light->mMatrix.translate(0, 0, 20);
-    light->MoveTo({5,5,28});
+    light->MoveTo({ 30, 30, 28 });
     mMap.insert({"light", light});
-
-//    SimpleObject* FlatGround = new SimpleObject(Type::Plane, 10.f, plainShader);
-//    FlatGround->init();
-//    FlatGround->mMatrix.rotate(-90.f, 1, 0 ,0);
-//    mMap.insert({"FlatGround", FlatGround});
 
 
     /* Bakken */
@@ -245,11 +240,8 @@ void RenderWindow::init()
     mSceneObjects.push_back(Bakken);
 
     /* ----- HOYDEKARTET ------ */
-    BigArea = new HoydeKart(plainShader, 0.05f, 6);
+    BigArea = new HoydeKart(plainShader, 0.05f, 10/*, true, 1000*/);
     BigArea->m_shader = phongShader;
-//    auto tmp = new Texture("HeightmapTexture.png");
-//    terrain->setTexture(tmp->getTexture("HeightmapTexture.png"));
-//    terrain->setTexture(mTextureMap["TerrainTexture"]->textureID);
     BigArea->setTexture(mTextureMap["Monkey"]->textureID);
     BigArea->init();
     mSceneObjects.push_back(BigArea);
@@ -259,10 +251,8 @@ void RenderWindow::init()
     Ball = new OctahedronBall(3, 1.f);
     Ball->m_shader = plainShader;
     Ball->init();
-//    StartPosition = {a.x() + 1, a.y() - 1, a.z()};
     StartPosition = { 9.5, 9.5, Ball->GetRadius() + 18 };
     StartVelocity = { 0, 0, 0 };
-//    Ball->PreSim_MoveTo(StartPosition, Bakken);
     Ball->PreSim_MoveTo(StartPosition, BigArea);
     Ball->SetStartVelocity(StartVelocity);
     mMap.insert({"Ball", Ball});
@@ -272,15 +262,14 @@ void RenderWindow::init()
     /* ----- NEDBØR ----- */
     MakeNedbor(5, 3.f, 20.f, true, 5.f);
 
+    /* ------ B-SPLINE TESTING ------ */
+    splineTest = new BSpline(plainShader);
+    splineTest->init();
+
 
     /* Skybox / CubeMap */
     cubemap = new CubeMap(cubeMapShader);
 
-
-//    for (auto& it : mSceneObjects)
-//    {
-//        it->setShader(phongShader);
-//    }
 
 
     /* VELOCITY TEST */
@@ -380,11 +369,13 @@ void RenderWindow::render()
 
 //        Ball->CalculatePhysics(Bakken, DeltaTime);
         Ball->CalculatePhysics(BigArea, DeltaTime);
+        Ball->Update(DeltaTime);
 
         /* -- Fysikken til nedbøret -- */
         for (auto& it : mNedbor)
         {
             it->CalculatePhysics(BigArea, DeltaTime);
+            it->Update(DeltaTime);
         }
 
         /* Viser ballens nåverende posisjon */
@@ -401,23 +392,12 @@ void RenderWindow::render()
     /* -- RENDERING SCENE OBJECTS -- */
     PhongShaderUpdate();
     light->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
-//    for (const auto& it : mMap)
-//    {
-//        it.second->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
-//    }
-//    /* -- Render Regn -- */
-//    for (const auto& it : mNedbor)
-//    {
-//        it->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
-//    }
-//    Bakken->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
-
-//    BigArea->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
-
     for (const auto& it : mSceneObjects)
     {
         it->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
     }
+
+    splineTest->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
 
     /* --- RENDERING DEBUG OBJECTS --- */
 //    BigArea->drawLines(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
@@ -713,6 +693,25 @@ void RenderWindow::SlettNedbor()
     mNedbor.clear();
 }
 
+void RenderWindow::ShowSplineCurves(bool b)
+{
+    Ball->bShowSplineCurve = b;
+    for (auto& it : mNedbor)
+    {
+        it->bShowSplineCurve = b;
+    }
+}
+
+void RenderWindow::ShowSplinePoints(bool b)
+{
+//    Ball->bShowSplinePoints = b;
+    Ball->ShowSplinePoints(b);
+    for (auto& it : mNedbor)
+    {
+        it->ShowSplinePoints(b);
+    }
+}
+
 void RenderWindow::UsingPhongShader(bool b)
 {
     if (b)
@@ -789,6 +788,7 @@ void RenderWindow::HeightCurve_ChangeThickness(float value)
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+/* Håndterer input som skal kunne skje hver frame */
 void RenderWindow::handleInput()
 {
     forward = 0.f;
@@ -823,11 +823,40 @@ void RenderWindow::handleInput()
 //        mCamera->setFollowPlayer(false);
     }
 
+//    if (mKeyboard[Qt::Key_F])
+//    {
+//        LogError("F Key");
+//    }
+
 
     if (!bSimulate)
     {
         forward = 0;
         right = 0;
+    }
+}
+
+/* Håndterer input som skal kun skje 1 gang per knappetrykk */
+void RenderWindow::handleSingleInput(int key)
+{
+    if (key == Qt::Key_G)
+    {
+        splineTest->DeleteCurve();
+    }
+    if (key == Qt::Key_F)
+    {
+        splineTest->MakeCurve1();
+//        LogError("Key F");
+//        splineTest->NewPoint({10, 20, 0});
+    }
+    if (key == Qt::Key_V)
+    {
+        splineTest->MakeCurve2();
+    }
+    if (key == Qt::Key_B)
+    {
+        splineTest->NewPoint({20, -10, 0});
+//        splineTest->NewPoint({20, 20, 0});
     }
 }
 
@@ -857,15 +886,41 @@ void RenderWindow::mouseMoveEvent(QMouseEvent *event)
 // NB - see renderwindow.h for signatures on keyRelease and mouse input
 void RenderWindow::keyPressEvent(QKeyEvent *event)
 {
+    /* Qt har satt opp at alle knapper kalles på igjen
+     *  med en autoRepeat funksjon i regulære intervaler.
+     * Dette til føre til at knapper "trykkes" på hver gang
+     *  intervalet nås.
+     * Her sjekkes det om event'e som kalles er autoRepeated
+     *  og hvis det er sant så ignoreres input */
+    if (event->isAutoRepeat())
+    {
+        event->ignore();
+        return;
+    }
+
     if (event->key() == Qt::Key_Escape)
     {
         mMainWindow->close();       //Shuts down the whole program
     }
 
-    mKeyboard[event->key()] = true;
+    if (!mKeyboard[event->key()])
+    {
+        mKeyboard[event->key()] = true;
+
+        handleSingleInput(event->key());
+    }
 }
 
 void RenderWindow::keyReleaseEvent(QKeyEvent *event)
 {
-    mKeyboard[event->key()] = false;
+    if (event->isAutoRepeat())
+    {
+        event->ignore();
+        return;
+    }
+
+    if (mKeyboard[event->key()])
+    {
+        mKeyboard[event->key()] = false;
+    }
 }

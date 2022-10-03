@@ -10,6 +10,7 @@ INCLUDEPATH += \
 #    ./stb_image
 
 SOURCES += main.cpp \
+    Objects/b_spline.cpp \
     Objects/bakke.cpp \
     Objects/hoydekart.cpp \
     Shaders/shader.cpp \
@@ -36,6 +37,7 @@ SOURCES += main.cpp \
     visualobject.cpp
 
 HEADERS += \
+    Objects/b_spline.h \
     StandAlone/LoggerFunctions.h \
     Objects/bakke.h \
     Objects/hoydekart.h \

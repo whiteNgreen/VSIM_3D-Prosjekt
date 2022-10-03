@@ -73,6 +73,8 @@ void MainWindow::init()
 
     //feed in MainWindow to the logger - has to be done, else logger will crash program
     Logger::getInstance()->setMainWindow(this);;
+
+    grabKeyboard();
 }
 
 void MainWindow::OnStart()
@@ -334,5 +336,18 @@ void MainWindow::on_HeightCurves_Button_toggled(bool checked)
     {
         ui->HeightCurves_Button->setText("Show\nHeight Curves");
     }
+}
+
+
+void MainWindow::on_BSpline_ShowCurves_toggled(bool checked)
+{
+    mRenderWindow->ShowSplineCurves(checked);
+    ui->BSpline_ShowPoints->setEnabled(checked);
+}
+
+
+void MainWindow::on_BSpline_ShowPoints_toggled(bool checked)
+{
+    mRenderWindow->ShowSplinePoints(checked);
 }
 

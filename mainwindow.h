@@ -68,6 +68,10 @@ private slots:
 
     void on_HeightCurves_Button_toggled(bool checked);
 
+    void on_BSpline_ShowCurves_toggled(bool checked);
+
+    void on_BSpline_ShowPoints_toggled(bool checked);
+
 private:
     ///called from the constructor. Initializes different parts of the program.
     void init();

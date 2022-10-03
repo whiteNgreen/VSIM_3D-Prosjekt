@@ -36,6 +36,7 @@ public:
 
     void setPositionRotation(QMatrix4x4 matrix);
 
+    Shader* getShader() const { return m_shader; }
     void setShader(Shader* shader){ m_shader = shader; }
     Shader* m_shader{nullptr};  // Tar denne ut av private for øyeblikket
 //    Shader* mPhongShader{ nullptr };
