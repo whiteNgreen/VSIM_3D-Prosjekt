@@ -108,21 +108,13 @@ void OctahedronBall::SetSurfaceIndex(Bakke* bakken)
     QVector3D SurfaceNormal{};
     QVector3D Baryc{};
     QVector3D ObjectPosition{ Position };
-//    QVector3D ObjectPosition{ mMatrix.column(3).toVector3D() };
     float radius{ mRadius };
 
-//    for (unsigned int i{1}; i <= bakken->mTriangleIndex; i++)
-//    {
-//        tmpIndex = bakken->BarySentricCoordinate( ObjectPosition, Baryc, SurfacePosition, SurfaceNormal, i );
-
-//        if (tmpIndex){ break; }
-//    }
 
     tmpIndex = bakken->BarySentricCoordinate( ObjectPosition, Baryc, SurfacePosition, SurfaceNormal );
 
     /* Sjekk om ballen er oppå flata */
     float HeightDifferenceObjectSurface = GetDistanceToSurface( ObjectPosition, SurfacePosition, SurfaceNormal ) - radius;
-//    mLogger->logText("HeightDifference: " + std::to_string(HeightDifferenceObjectSurface));
 
     /* Hvis ballen er under flata så korrigerer vi høyden i z-aksen til å matche surface */
     if (HeightDifferenceObjectSurface >= 0.001f)
@@ -131,11 +123,6 @@ void OctahedronBall::SetSurfaceIndex(Bakke* bakken)
     }
 
     mTriangleIndex = tmpIndex;
-
-//    Log(" ----- On Triangle : " + std::to_string(mTriangleIndex) + " -------- ");
-//    LogVector("Presim : Baryc", Baryc);
-//    LogVector("Presim : SurfacePosition", SurfacePosition);
-//    LogVector("Presim : SurfaceNormal", SurfaceNormal);
 }
 
 void OctahedronBall::SetStartVelocity(const QVector3D StartVelocity)
@@ -169,28 +156,6 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
 
     /* 1: Posisjonen og om den er på en overflate */
     /* Få info om overflaten ballen er over */
-    /* ---- GAMMEL: FOR DET LILLE OMRÅDE ----- */
-//    {
-//        for (unsigned int i{1}; i <= bakken->mTriangleIndex; i++)
-//        {
-//            tmpIndex = bakken->BarySentricCoordinate( ObjectPosition, Baryc, SurfacePosition, SurfaceNormal, i );
-
-//            if (tmpIndex){ break; }
-//        }
-
-//        /* Hard koda friksjon konstant per triangel */
-//        switch(tmpIndex)
-//        {
-//        case 1: case 2: case 3: case 4:
-//            FrictionConstant = 0.2;
-//            break;
-//        case 0:
-//            FrictionConstant = 0;
-//            break;
-//        default:
-//            break;
-//        }
-//    }
     tmpIndex = bakken->BarySentricCoordinate( ObjectPosition, Baryc, SurfacePosition, SurfaceNormal);
     LogValue("Friction Constant", FrictionConstant);
 
@@ -239,13 +204,6 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
 
     /* Sjekk de barysentriske koordinatene for den nye posisjonen */
     tmpIndex = bakken->BarySentricCoordinate( ObjectPosition, Baryc, SurfacePosition2, SurfaceNormal2);
-//    for (unsigned int i{1}; i <= bakken->mTriangleIndex; i++)
-//    {
-//        tmpIndex = bakken->BarySentricCoordinate( ObjectPosition, Baryc, SurfacePosition2, SurfaceNormal2, i );
-
-//        if (tmpIndex){ break; }
-//    }
-
 
 
     /* 5: Er den nye posisjonen gyldig? Nei?: Gjør justeringer */
@@ -285,14 +243,6 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
                  * For å kunne finne hastigheten en vektor burde ha parallelt med bakken når den lander     //vProj
                  * OG for å finne hastigheten ballen skal ha perpendikulært med bakken                      //hProj
                  * */
-//                QVector3D Vc{ Velocity };    // Inkommende Hastigheten
-//                QVector3D V{};                  // Ny Hastighet
-//                QVector3D n{ SurfaceNormal }; // SurfaceNormal
-//                QVector3D B{ QVector3D::crossProduct(n, QVector3D::crossProduct(Vc.normalized(), n)) };
-//                QVector3D vProj = (QVector3D::dotProduct(Vc,B)/QVector3D::dotProduct(B,B))*B;
-//                QVector3D hProj = (QVector3D::dotProduct(Vc,n)/QVector3D::dotProduct(n,n))*n;
-//                V = (vProj + (n * hProj.length() * Elasticity));
-//                Velocity = V;
                 ProjectCollisionVelocity(SurfaceNormal);
             }
             else
@@ -319,18 +269,6 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
             /* Oppdater velocity */
             mLogger->logText("CAME OVER TO A NEW TRIANGLE!");   // Husker ikke forrige triangel så begge surfacenormals er (0,0,1)
 
-            /* Funker fint hvis den ikke skal sprette på overgangen */
-//            QVector3D n{ bakken->GetNormalFromIndex(tmpIndex) + bakken->GetNormalFromIndex(mTriangleIndex) }; n.normalize();
-//            QVector3D Ortho{ QVector3D::crossProduct(n, QVector3D::crossProduct(Velocity.normalized(), n)) };
-
-//            float dotprod{ QVector3D::dotProduct(Velocity.normalized()*-1, n) };
-//            float angle{ acosf(dotprod) };
-
-//            QVector3D NewVelocity = (cosf(angle) * n) + (sinf(angle)*Ortho);
-//            NewVelocity *= Velocity.length();
-
-//            Velocity = NewVelocity;
-
             /* Hovedproblemet er at ballen (ikke som partikkel) ikke har
              * kontroll på kontaktpunktene den ville hatt over hele overflaten
              * når den går mellom trekanter
@@ -338,7 +276,6 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
             ProjectCollisionVelocity(SurfaceNormal2);   // Mer nøyaktig overgang mellom overflater
 
             UpdateVelocity(DeltaTime);
-
 
             HeightDifferenceObjectSurface = GetDistanceToSurface(ObjectPosition, SurfacePosition2, SurfaceNormal2) - radius;
         }

@@ -65,6 +65,7 @@ public:
     void SlettNedbor();
     void ShowSplineCurves(bool b);
     void ShowSplinePoints(bool b);
+    bool bShowingSplinePoints{ true };
 
     void UsingPhongShader(bool b);
     void MoveLight(const QVector3D Move);

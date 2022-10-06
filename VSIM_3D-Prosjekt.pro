@@ -64,7 +64,8 @@ HEADERS += \
     texture.h \
     trianglesurface.h \
     vertex.h \
-    visualobject.h
+    visualobject.h \
+    Objects\visualpoint.h
 
 FORMS += \
     mainwindow.ui

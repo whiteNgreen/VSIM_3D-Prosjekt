@@ -32,9 +32,6 @@ public:
 
     void MakeBSplineCurve();
 
-        /* TEST FUNKSJONER */
-        void MakeCurve1();
-        void MakeCurve2();
 
     void DeleteCurve();
 

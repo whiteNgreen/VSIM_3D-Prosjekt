@@ -105,16 +105,13 @@ void RenderWindow::init()
 
     /* PLAIN SHADER */
     plainShader = new Shader("../VSIM_3D-Prosjekt/Shaders/plainshader.vert", "../VSIM_3D-Prosjekt/Shaders/plainshader.frag");
-//    plainShader->setShaderType(ShaderType::plain);
 
     /* TEXTURE SHADER */
     textureShader = new Shader("../VSIM_3D-Prosjekt/Shaders/textureshader.vert", "../VSIM_3D-Prosjekt/Shaders/textureshader.frag");
-//    textureShader->setShaderType(ShaderType::phong);
     textureShader->getUniformMatrix("textureSampler");
 
     /* PHONG SHADER */
     phongShader = new Shader("../VSIM_3D-Prosjekt/Shaders/phongshader.vert", "../VSIM_3D-Prosjekt/Shaders/phongshader.frag");
-//    phongShader->setShaderType(ShaderType::phong);
     phongShader->getUniformMatrix("mMatrix");
     phongShader->getUniformMatrix("pMatrix");
     phongShader->getUniformMatrix("vMatrix");
@@ -141,7 +138,6 @@ void RenderWindow::init()
 
     /* CUBE MAP SHADER */
     cubeMapShader = new Shader("../VSIM_3D-Prosjekt/Shaders/cubemapShader.vert", "../VSIM_3D-Prosjekt/Shaders/cubemapShader.frag");
-//    cubeMapShader->setShaderType(ShaderType::cubemap);
     cubeMapShader->getUniformMatrix("view");
     cubeMapShader->getUniformMatrix("projection");
     cubeMapShader->getUniformMatrix("skybox");
@@ -185,7 +181,6 @@ void RenderWindow::init()
      * Sets the initial translation to 20 in the z direction */
     light = new Light(new ObjMesh("Sphere.obj", plainShader), plainShader);
     light->init();
-//    light->mMatrix.translate(0, 0, 20);
     light->MoveTo({ 30, 30, 28 });
     mMap.insert({"light", light});
 
@@ -211,7 +206,7 @@ void RenderWindow::init()
 //        Bakken->CreateTriangle(d, e, f);
 //    }
 
-    /* Flat overflate med en bakke på enden */
+    /* Flat overflate med en bakke på enden, Brukt som testområde for ballen sin fysikk utregning */
     {
         float Width{ 10.f };
         /* Flat overflate */
@@ -237,14 +232,18 @@ void RenderWindow::init()
     }
 
     Bakken->init();
-    mSceneObjects.push_back(Bakken);
+//    mSceneObjects.push_back(Bakken);
 
     /* ----- HOYDEKARTET ------ */
     BigArea = new HoydeKart(plainShader, 0.05f, 10/*, true, 1000*/);
     BigArea->m_shader = phongShader;
-    BigArea->setTexture(mTextureMap["Monkey"]->textureID);
+//    BigArea->setTexture(mTextureMap["Monkey"]->textureID);
     BigArea->init();
     mSceneObjects.push_back(BigArea);
+
+    /* Setter maks høyden til heightcurves Shaderen basert på Zmax fra HoydeKart objektet */
+    glUseProgram(heightcurvesShader->getProgram());
+    glUniform1f(heightcurvesShader->getUniformMatrix("maxHeight"), BigArea->Zmax);
 
 
     /* ------ BALLEN ------- */
@@ -269,40 +268,6 @@ void RenderWindow::init()
 
     /* Skybox / CubeMap */
     cubemap = new CubeMap(cubeMapShader);
-
-
-
-    /* VELOCITY TEST */
-//    QVector3D a{2, -3, 5};
-//    QVector3D b{3, 6, -4};
-//    QVector3D proj = (QVector3D::dotProduct(a,b)/QVector3D::dotProduct(b,b))*b;
-//    qDebug() << "proj: " << proj;
-
-
-//    /* Projeksjonen av Velocity på b (orthogonal til n på vei mot Velocity)
-//     * For å kunne finne hastigheten en vektor burde ha parallelt med bakken når den lander     //vProj
-//     * OG for å finne hastigheten ballen skal ha perpendikulært med bakken                      //hProj
-//     * */
-//    float F = 0;    // Forenklet friksjons akselerasjon
-//    float E = 0.2;
-//    QVector3D Vc{ 0, 1, -7.67 };    // Inkommende Hastigheten
-//    QVector3D V{};                  // Ny Hastighet
-//    QVector3D n{ 0.707, 0, 0.707 }; // SurfaceNormal
-//    QVector3D B{ QVector3D::crossProduct(n, QVector3D::crossProduct(Vc.normalized(), n)) };
-//    QVector3D vProj = (QVector3D::dotProduct(Vc,B)/QVector3D::dotProduct(B,B))*B;
-//    QVector3D hProj = (QVector3D::dotProduct(Vc,n)/QVector3D::dotProduct(n,n))*n;
-//    V = (vProj - (vProj*F)) + (n * hProj.length() * E);
-
-//    /* Hvis vinkelen mellom Hastigheten*-1 og SurfaceNormal er 0
-//     * så reverserer vi bare Hastigheten og ganger med Elasticity
-//     * */
-//    if (QVector3D::dotProduct(Vc.normalized()*-1, n) == 1)
-//    {
-//        V = Vc * -1 * E;
-//    }
-//    qDebug() << "vProj: " << vProj;
-//    qDebug() << "hProj: " << hProj;
-//    qDebug() << "V: " << V;
 
 
     /* Setter mMainWindow verdier til GUI elementene til å matche det jeg hardkoder her */
@@ -400,10 +365,6 @@ void RenderWindow::render()
     splineTest->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
 
     /* --- RENDERING DEBUG OBJECTS --- */
-//    BigArea->drawLines(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
-
-//    Bakken->drawLines();  // Linjene burde være hvite eller noe sånt så de kan faktisk ses sammen med meshen
-
         /* Draw other objects */
         Axis->draw(mCamera->mProjectionMatrix, mCamera->mViewMatrix);
 
@@ -644,7 +605,6 @@ void RenderWindow::startOpenGLDebugger()
 
 void RenderWindow::MakeNedbor(int antallDroper, float RandomLengdeFraSenterXY, float HoydefraTerrain, bool RandomHeight /*=false*/, float RandomHeightDifference /*= 0*/)
 {
-//    mNedbor.clear();
     SlettNedbor();
 
     QVector3D Senter = BigArea->GetCenter();
@@ -674,6 +634,7 @@ void RenderWindow::MakeNedbor(int antallDroper, float RandomLengdeFraSenterXY, f
         mNedbor.push_back(drope);
         mSceneObjects.push_back(drope.get());
     }
+    ShowSplinePoints(bShowingSplinePoints);
 }
 
 void RenderWindow::SlettNedbor()
@@ -704,7 +665,7 @@ void RenderWindow::ShowSplineCurves(bool b)
 
 void RenderWindow::ShowSplinePoints(bool b)
 {
-//    Ball->bShowSplinePoints = b;
+    bShowingSplinePoints = b;
     Ball->ShowSplinePoints(b);
     for (auto& it : mNedbor)
     {
@@ -839,25 +800,7 @@ void RenderWindow::handleInput()
 /* Håndterer input som skal kun skje 1 gang per knappetrykk */
 void RenderWindow::handleSingleInput(int key)
 {
-    if (key == Qt::Key_G)
-    {
-        splineTest->DeleteCurve();
-    }
-    if (key == Qt::Key_F)
-    {
-        splineTest->MakeCurve1();
-//        LogError("Key F");
-//        splineTest->NewPoint({10, 20, 0});
-    }
-    if (key == Qt::Key_V)
-    {
-        splineTest->MakeCurve2();
-    }
-    if (key == Qt::Key_B)
-    {
-        splineTest->NewPoint({20, -10, 0});
-//        splineTest->NewPoint({20, 20, 0});
-    }
+
 }
 
 void RenderWindow::mousePressEvent(QMouseEvent *event)

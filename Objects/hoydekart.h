@@ -158,15 +158,7 @@ struct TriangleObj
     }
 };
 
-//class Quad : Bakke
-//{
-//    Quad(Shader* shader, std::vector<Vertex> Vertices)
-//    {
-//        m_shader = shader;
 
-
-//    }
-//};
 
 class HoydeKart : public Bakke
 {
@@ -188,7 +180,9 @@ public:
     std::vector<int> mTriangleIndexes;
 
 public: /* ----- Lage Terrain Mesh ----- */
-    HoydeKart(Shader* shader, float scale, unsigned int RuteResolution = 3, bool ReadComplex = false, int PointCloudResolution = 100);
+    HoydeKart(Shader* shader,
+              float scale, unsigned int RuteResolution = 3,
+              bool ReadComplex = false, int PointCloudResolution = 100);
         /* PointCloudResolution, hvilke n'te punkt skal vi lese inn
          * = 1: Den sanne oppløsningen. Leser inn alle punkter
          * = 2: Hvert andre punkt
