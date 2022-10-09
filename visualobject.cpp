@@ -13,6 +13,7 @@ VisualObject::~VisualObject()
 
 void VisualObject::init()
 {
+
     //must call this to use OpenGL functions
     initializeOpenGLFunctions();
 

@@ -142,6 +142,12 @@ private:    // Objekter i scenen
 //    std::vector<OctahedronBall*> mNedbor;
     std::vector<std::shared_ptr<OctahedronBall>> mNedbor;
 
+//    void BallPhysics(OctahedronBall* object, Bakke* surface, float DeltaTime)
+//    {
+//        object->CalculatePhysics(surface, DeltaTime);
+//        object->Update(DeltaTime);
+//    }
+
     BSpline* splineTest{ nullptr };
 
     /* Hoydekart */
@@ -205,6 +211,12 @@ protected:
 inline float random_between_two_floats(float min, float max)
 {
     return (min + 1) + (((float) rand()) / (float) RAND_MAX) * (max - (min + 1));
+}
+
+inline void PhysicsCalc(OctahedronBall* object, Bakke* surface, float DeltaTime)
+{
+    object->CalculatePhysics(surface, DeltaTime);
+    object->Update(DeltaTime);
 }
 
 #endif // RENDERWINDOW_H

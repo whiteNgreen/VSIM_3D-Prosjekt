@@ -368,15 +368,22 @@ void RenderWindow::render()
         ElapsedTime += DeltaTime;
 
 //        Ball->CalculatePhysics(Bakken, DeltaTime);
-        Ball->CalculatePhysics(BigArea, DeltaTime);
-        Ball->Update(DeltaTime);
+//        std::thread t1(&RenderWindow::BallPhysics, Ball, BigArea, DeltaTime);
+//        std::thread t1(PhysicsCalc, Ball, BigArea, DeltaTime);
+//        Ball->CalculatePhysics(BigArea, DeltaTime);
+//        Ball->Update(DeltaTime);
+//        Ball->InitSpline();
 
         /* -- Fysikken til nedbøret -- */
         for (auto& it : mNedbor)
         {
             it->CalculatePhysics(BigArea, DeltaTime);
             it->Update(DeltaTime);
+            it->InitSpline();
         }
+
+//        t1.join();
+        Ball->InitSpline();
 
         /* Viser ballens nåverende posisjon */
         if (mMainWindow)
@@ -386,7 +393,10 @@ void RenderWindow::render()
         }
 
         bGoNextFrame = false;
+
     }
+
+
 
 
     /* -- RENDERING SCENE OBJECTS -- */

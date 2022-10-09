@@ -129,6 +129,10 @@ public:
     float SplinePointTimeInterval{ 1.f };
 
     void MakeSplinePoint(const QVector3D& Location);
+    bool bScheduleNewSplinePoint{ false };
+    QVector3D ScheduleSplinePoint;
+
+    void InitSpline();
 
 /* Debug */
 public:

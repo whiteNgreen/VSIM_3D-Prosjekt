@@ -41,6 +41,7 @@ public:
     float Bid(float t, int iteration, int degree);
     float Wid(float t, int iteration, int degree);
 
+    virtual void init() override;
     virtual void draw(QMatrix4x4& projectionMatrix, QMatrix4x4& viewMatrix) override;
 };
 

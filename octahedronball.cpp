@@ -308,7 +308,9 @@ void OctahedronBall::CalculatePhysics(Bakke* bakken, float DeltaTime)
             /* Første gangen ballen lander på bakken */
             if (!bFirstGroundHit)
             {
-                MakeSplinePoint(ObjectPosition);
+//                MakeSplinePoint(ObjectPosition);
+                bScheduleNewSplinePoint = true;
+                ScheduleSplinePoint = ObjectPosition;
                 bFirstGroundHit = true;
             }
         }
@@ -612,6 +614,13 @@ void OctahedronBall::ShowSplinePoints(bool b)
 
 void OctahedronBall::Update(float DeltaTime)
 {
+    if (bScheduleNewSplinePoint)
+    {
+        MakeSplinePoint(ScheduleSplinePoint);
+
+        bScheduleNewSplinePoint = false;
+    }
+
     if (bFirstGroundHit)
     {
         SplineTimer += DeltaTime;
@@ -628,6 +637,11 @@ void OctahedronBall::Update(float DeltaTime)
 void OctahedronBall::MakeSplinePoint(const QVector3D &Location)
 {
     LocationSpline->NewPoint(Location);
+}
+
+void OctahedronBall::InitSpline()
+{
+    LocationSpline->init();
 }
 
 

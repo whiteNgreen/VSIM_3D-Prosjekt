@@ -4,6 +4,7 @@
 BSpline::BSpline()
 {
     setShader(Shader::getPlainShader());
+    init();
 }
 
 BSpline::BSpline(Shader* shader)
@@ -28,6 +29,7 @@ BSpline::BSpline(Shader* shader)
 
 //    Log("POINTS = " + std::to_string(mPoints.size()));
     //    Log("KNOTS = " + std::to_string(mKnots.size()));
+    init();
 }
 
 BSpline::~BSpline()
@@ -196,6 +198,16 @@ float BSpline::Wid(float t, int iteration, int degree)
     }
 
     return 0.f;
+}
+
+void BSpline::init()
+{
+    VisualObject::init();
+
+    for (const auto& it : mVisualPoints)
+    {
+        it->init();
+    }
 }
 
 void BSpline::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)
