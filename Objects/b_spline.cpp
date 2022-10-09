@@ -4,32 +4,11 @@
 BSpline::BSpline()
 {
     setShader(Shader::getPlainShader());
-    init();
 }
 
 BSpline::BSpline(Shader* shader)
 {
-//    setShader(shader);
-    setShader(Shader::getPlainShader());
-
-    /* --- TESTING --- */
-    QVector3D a {   0,  -5,   0 };
-    QVector3D b {  10, -10,   0 };
-//    QVector3D a {   0,   0,   0 };
-//    QVector3D b {  10,   0,   0 };
-//    QVector3D c {   0,  10,   0 };
-//    QVector3D d {  10,  20,   0 };
-//    QVector3D e {  25,  10,   0 };
-
-    NewPoint(a);
-    NewPoint(b);
-//    NewPoint(c);
-//    NewPoint(d);
-//    NewPoint(e);
-
-//    Log("POINTS = " + std::to_string(mPoints.size()));
-    //    Log("KNOTS = " + std::to_string(mKnots.size()));
-    init();
+    setShader(shader);
 }
 
 BSpline::~BSpline()
@@ -69,12 +48,12 @@ void BSpline::MakeKnotVector()
      * Fra og med 4 punkter så bruker jeg den mer avanserte metoden */
     if (mPoints.size() == 2)
     {
-//        mKnots = { 0, 0, 0.5, 1, 1 };  // 2 Punkter
         return;
     }
+    /* Antar at b-splinen er av andre grad */
     if (mPoints.size() == 3)
     {
-        mKnots = { 0, 0, 0, 1, 1, 1 };  // 2 Punkter
+        mKnots = { 0, 0, 0, 1, 1, 1 };
         return;
     }
 
@@ -139,32 +118,6 @@ void BSpline::MakeBSplineCurve()
     }
 }
 
-/* TEST FUNKSJON */
-void BSpline::MakeCurve1()
-{
-    DeleteCurve();
-
-    QVector3D a{0, 0, 0};
-    NewPoint(a);
-    QVector3D b{10, 0, 0};
-    NewPoint(b);
-    QVector3D c{-5, -10, 0};
-    NewPoint(c);
-}
-
-/* TEST FUNKSJON */
-void BSpline::MakeCurve2()
-{
-    DeleteCurve();
-
-    QVector3D a{0, 0, 0};
-    NewPoint(a);
-    QVector3D b{-10, -10, 0};
-    NewPoint(b);
-    QVector3D c{20, 2, 0};
-    NewPoint(c);
-}
-
 void BSpline::DeleteCurve()
 {
     mVertices.clear();
@@ -198,16 +151,6 @@ float BSpline::Wid(float t, int iteration, int degree)
     }
 
     return 0.f;
-}
-
-void BSpline::init()
-{
-    VisualObject::init();
-
-    for (const auto& it : mVisualPoints)
-    {
-        it->init();
-    }
 }
 
 void BSpline::draw(QMatrix4x4 &projectionMatrix, QMatrix4x4 &viewMatrix)

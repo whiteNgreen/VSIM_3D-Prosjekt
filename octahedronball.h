@@ -46,7 +46,6 @@ public:
     /* Pre Sim Flytting */
     /* Når objektet flyttes på utenfor simuleringen */
     QVector3D mStartLocation{};
-//    QVector3D mStartVelocity{};
 
     void PreSim_MoveTo(const QVector3D& Location, Bakke* bakken);
     void PreSim_MoveTo(const QVector3D& Location);
@@ -92,11 +91,9 @@ public:
 
     /* Setter start verdier */
     void SetStartVelocity(const QVector3D StartVelocity);
-//    void SetStartVelocity(const QVector3D StartVelocity);
 
     /* Kalkulerer fysikken. Inneholder all logikken som trengs til det */
     void CalculatePhysics(Bakke* bakken, float DeltaTime);
-//    void CalculatePhysics(HoydeKart* bakken, float DeltaTime);
     void CalculateAcceleration(QVector3D SurfaceNormal, float FrictionForce, const int SurfaceIndex);
     void UpdateVelocity(float DeltaTime);
 
@@ -140,41 +137,3 @@ public:
 };
 #endif // OCTAHEDRONBALL_H
 
-
-
-
-///* Logging functions */
-//inline void Log(const std::string log)
-//{
-//    Logger::getInstance()->logText(log);
-//}
-
-///* Able to log different values */
-//inline void LogValue(const std::string Name, const float value)
-//{
-//    Logger::getInstance()->logText(Name + ": " + std::to_string(value));
-//}
-//inline void LogValue(const std::string Name, const int value)
-//{
-//    Logger::getInstance()->logText(Name + ": " + std::to_string(value));
-//}
-//inline void LogValue(const std::string Name, const unsigned int value)
-//{
-//    Logger::getInstance()->logText(Name + ": " + std::to_string(value));
-//}
-//inline void LogValue(const std::string Name, const double value)
-//{
-//    Logger::getInstance()->logText(Name + ": " + std::to_string(value));
-//}
-
-///* Log a vector Logger instance */
-//inline void LogVector(const std::string Name, const QVector3D Vector)
-//{
-//    std::string sVector = "( " + std::to_string(Vector.x()) + ", " +std::to_string(Vector.y()) + ", " + std::to_string(Vector.z()) + " )";
-//    Logger::getInstance()->logText(Name + ": " + sVector);
-//}
-
-//inline void LogFloat(const std::string Name, const float value)
-//{
-//    Logger::getInstance()->logText(Name + ": " + std::to_string(value));
-//}

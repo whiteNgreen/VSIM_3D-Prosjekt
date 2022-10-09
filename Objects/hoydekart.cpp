@@ -19,7 +19,7 @@ int HoydeKart::BarySentricCoordinate(const QVector3D ObjectPosition, QVector3D &
 
         if (index > 0)
         {
-            LogError("FOUND TRIANGLE");
+//            LogError("FOUND TRIANGLE");
             TheBarysentricCoordinates = Baryc;
             SurfacePosition = SurfacePos;
             SurfaceNormal = SurfaceN;
@@ -39,7 +39,7 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int RuteResolution /*
     setShader(shader);
 
     /* ------- LESE PUNKTSKY FIL OG PUSHER INNI mPunktData ------- */
-//    std::string filnavn = "../VSIM_3D-Prosjekt/HoydeKart/SmallArea.txt";
+//    std::string filnavn = "../VSIM_3D-Prosjekt/HoydeKart/SmallArea.txt";  // Annet område
     std::string filnavn = "../VSIM_3D-Prosjekt/HoydeKart/Svabudalen.txt";
     if (ReadComplex)
     {
@@ -49,7 +49,7 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int RuteResolution /*
         /* Skriver den nye simplifiserte punktskyen til en ny fil */
         WriteSimplePointCloud();
 
-        ReadSimplePointCloud();
+        ReadSimplePointCloud(); // Trengs denne her?
     }
     else
     {
@@ -67,7 +67,7 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int RuteResolution /*
         mPunktdata[i] *= scale;
     }
 
-    /* Line count and Max & Min values of the area */
+    /* Max & Min values of the area */
     Xmax -= Xmin;
     Ymax -= Ymin;
     Zmax -= Zmin;
@@ -82,9 +82,7 @@ HoydeKart::HoydeKart(Shader* shader, float scale, unsigned int RuteResolution /*
     auto makerute_start = std::chrono::system_clock::now();
 
     /* Regulær Triangulering */
-//    unsigned int resolutionX{3};   // Bredde, brukt for å finne spesifike ruter via indekseringen
     unsigned int resolutionX{RuteResolution};   // Bredde, brukt for å finne spesifike ruter via indekseringen
-//    unsigned int resolutionY{3};
     unsigned int resolutionY{RuteResolution};
 
     float StepLengthX = Xmax / resolutionX;
